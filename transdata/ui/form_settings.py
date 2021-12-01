@@ -59,7 +59,7 @@ class FormSettings(FORM_CLASS, QWidget):
         ok = queryFillList.exec_(qFillList)
         while queryFillList.next():
             # print (query.value(1).toPyDate().strftime("%Y-%m-%d"))
-            self.ui.cbx_listcible.addItem(
+            self.cbx_listcible.addItem(
                 str(queryFillList.value(0))
                 + " / "
                 + str(queryFillList.value(1)),
@@ -71,4 +71,4 @@ class FormSettings(FORM_CLASS, QWidget):
             QtWidgets.QMessageBox.warning(
                 self, "Alerte", u"Requête remplissage liste cibles ratée"
             )
-        self.ui.cbx_listcible.setCurrentIndex(0)
+        self.cbx_listcible.setCurrentIndex(0)
