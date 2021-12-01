@@ -2,7 +2,6 @@
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.PyQt import QtWidgets, QtSql
 from qgis.PyQt.QtWidgets import QAction
 
 # Plugin package
@@ -22,19 +21,6 @@ class CenTransdataPlugin:
         self.iface = iface
         self.sql_xtor = SqlExecutor()
         self.trsfgeom_form = FormSettings()
-
-        # Connexion à la base de données
-        self.db = QtSql.QSqlDatabase.addDatabase("QPSQL")
-        # QPSQL = nom du pilote postgreSQL
-        self.db.setHostName("192.168.1.12")
-        self.db.setPort(5432)
-        self.db.setDatabaseName("bdcenpicardie")
-        self.db.setUserName("postgres")
-        self.db.setPassword("burotec")
-        ok = self.db.open()
-        if not ok:
-            QtWidgets.QMessageBox.warning(
-                self, "Alerte", u"La connexion est échouée" + self.db.hostName())
 
     def initGui(self):
         self.action = QAction("Go!", self.iface.mainWindow())
