@@ -114,16 +114,6 @@ p, li { white-space: pre-wrap; }
     <string>Rechercher</string>
    </property>
   </widget>
-  <widget class="QListView" name="lst_cibles">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>200</y>
-     <width>531</width>
-     <height>201</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="lbl_nbObjSel">
    <property name="geometry">
     <rect>
@@ -148,6 +138,16 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Exécuter</string>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="lst_cibles">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>200</y>
+     <width>641</width>
+     <height>261</height>
+    </rect>
    </property>
   </widget>
  </widget>
