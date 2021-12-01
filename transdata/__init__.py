@@ -10,7 +10,7 @@
 # ---------------------------------------------------------------------
 
 # PyQGIS
-from qgis.PyQt.QtWidgets import QAction, QMessageBox,
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
 
 # Plugin package
 from .ui.ui_trsfgeom import TrsfGeom #???
@@ -28,7 +28,7 @@ class MinimalPlugin:
         self.trsfgeom_form = TrsfGeom()
 
     def initGui(self):
-        self.action = QAction("Go!, self.iface.mainWindow())
+        self.action = QAction("Go!", self.iface.mainWindow())
         self.action.triggered.connect(self.run)
         self.iface.addToolBarIcon(self.action)
 
