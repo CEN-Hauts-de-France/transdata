@@ -9,7 +9,8 @@ from pathlib import Path
 
 # PyQGIS
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QWidget, QDialog
+from qgis.PyQt import QtWidgets, QtSql
+from qgis.PyQt.QtWidgets import QWidget
 
 
 # ############################################################################
@@ -35,7 +36,20 @@ class FormSettings(FORM_CLASS, QWidget):
         self.setupUi(self)
         self.lbl_title.setText("Paramètres du plugin")
 
-        self.btn_rech.clicked.connect(remplissList)
+        # Connexion à la base de données
+        self.db = QtSql.QSqlDatabase.addDatabase("QPSQL")
+        # QPSQL = nom du pilote postgreSQL
+        self.db.setHostName("192.168.1.12")
+        self.db.setPort(5432)
+        self.db.setDatabaseName("bdcenpicardie")
+        self.db.setUserName("postgres")
+        self.db.setPassword("burotec")
+        ok = self.db.open()
+        if not ok:
+            QtWidgets.QMessageBox.warning(
+                self, "Alerte", u"La connexion est échouée" + self.db.hostName())
+
+        self.btn_rech.clicked.connect(self.remplissList)
 
     def remplissList(self):
         """Remplissage de la liste"""
