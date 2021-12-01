@@ -6,5 +6,5 @@ def classFactory(iface):
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    from plugin_main import CenTransdataPlugin
+    from .plugin_main import CenTransdataPlugin
     return CenTransdataPlugin(iface)
