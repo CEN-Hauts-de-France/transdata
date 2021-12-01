@@ -13,9 +13,10 @@
 from qgis.PyQt.QtWidgets import QAction, QMessageBox
 
 # Plugin package
-from .ui.ui_trsfgeom import TrsfGeom #???
-from .utils.sql_executor import SqlExecutor
 from .trsfgeom_form import TrsfGeomDialog
+from .ui.ui_trsfgeom import TrsfGeom  # ???
+from .utils.sql_executor import SqlExecutor
+
 
 def classFactory(iface):
     return MinimalPlugin(iface)
@@ -37,8 +38,7 @@ class MinimalPlugin:
         del self.action
 
     def run(self):
-        #show the dialog
+        # show the dialog
         self.trsfgeom_form.show()
         # Run the dialog event loop
         result = self.exec_()
-                
