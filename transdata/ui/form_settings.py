@@ -60,11 +60,11 @@ class FormSettings(FORM_CLASS, QWidget):
         while queryFillList.next():
             # print (query.value(1).toPyDate().strftime("%Y-%m-%d"))
             self.ui.cbx_listcible.addItem(
-                str(query.value(0))
+                str(queryFillList.value(0))
                 + " / "
-                + str(query.value(1))
+                + str(queryFillList.value(1))
                ,
-                int(query.value(0)),
+                int(queryFillList.value(0)),
             )
         # 1er paramètre = ce qu'on affiche,
         # 2ème paramètre = ce qu'on garde en mémoire pour plus tard
