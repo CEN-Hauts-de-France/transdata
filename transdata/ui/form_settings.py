@@ -49,7 +49,7 @@ class FormSettings(FORM_CLASS, QWidget):
             QtWidgets.QMessageBox.warning(
                 self, "Alerte", u"La connexion est échouée" + self.db.hostName())
 
-        self.btn_rech.clicked.connect(self.remplissList)
+        self.btn_recherch.clicked.connect(self.remplissList)
 
     def remplissList(self):
         """Remplissage de la liste"""
@@ -62,8 +62,7 @@ class FormSettings(FORM_CLASS, QWidget):
             self.ui.cbx_listcible.addItem(
                 str(queryFillList.value(0))
                 + " / "
-                + str(queryFillList.value(1))
-               ,
+                + str(queryFillList.value(1)),
                 int(queryFillList.value(0)),
             )
         # 1er paramètre = ce qu'on affiche,
