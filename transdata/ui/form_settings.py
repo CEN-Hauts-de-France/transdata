@@ -53,21 +53,23 @@ class FormSettings(FORM_CLASS, QWidget):
 
     def remplissList(self):
         """Remplissage de la liste"""
-        self.lst_cibles.clear()
-        queryFillList = QtSql.QSqlQuery(self.db)
-        qFillList = u"SELECT codesitep, nomsitep FROM bd_site_cen.site_cen_hdf ORDER BY codesitep"
-        ok = queryFillList.exec_(qFillList)
-        while queryFillList.next():
-            # print (query.value(1).toPyDate().strftime("%Y-%m-%d"))
-            self.lst_cibles.addItem(
-                str(queryFillList.value(0))
-                + " / "
-                + str(queryFillList.value(1))
-            )
-        # 1er paramètre = ce qu'on affiche,
-        # 2ème paramètre = ce qu'on garde en mémoire pour plus tard
-        if not ok:
-            QtWidgets.QMessageBox.warning(
-                self, "Alerte", u"Requête remplissage liste cibles ratée"
-            )
+        if self.cbx_typCible.currentData(self.cbx_typCible.currentIndex()) == 'Site CEN':
+            self.lst_cibles.clear()
+            queryFillList = QtSql.QSqlQuery(self.db)
+            qFillList = u"SELECT codesitep, nomsitep FROM bd_site_cen.site_cen_hdf ORDER BY codesitep"
+            ok = queryFillList.exec_(qFillList)
+            while queryFillList.next():
+                # print (query.value(1).toPyDate().strftime("%Y-%m-%d"))
+               self.lst_cibles.addItem(
+                    str(queryFillList.value(0))
+                    + " / "
+                    + str(queryFillList.value(1))
+                )
+            if not ok:
+                QtWidgets.QMessageBox.warning(
+                    self, "Alerte", u"Requête remplissage liste cibles ratée"
+                )
+        else:
+            self.lst_cibles.clear()
+            self.lst_cibles.addItem('Raté!!! ;-p')
         self.lst_cibles.setCurrentRow(0)
