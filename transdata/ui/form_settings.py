@@ -62,8 +62,7 @@ class FormSettings(FORM_CLASS, QWidget):
             self.lst_cibles.addItem(
                 str(queryFillList.value(0))
                 + " / "
-                + str(queryFillList.value(1)),
-                str(queryFillList.value(0)),
+                + str(queryFillList.value(1))
             )
         # 1er paramètre = ce qu'on affiche,
         # 2ème paramètre = ce qu'on garde en mémoire pour plus tard
@@ -71,4 +70,4 @@ class FormSettings(FORM_CLASS, QWidget):
             QtWidgets.QMessageBox.warning(
                 self, "Alerte", u"Requête remplissage liste cibles ratée"
             )
-        self.cbx_listcible.setCurrentIndex(0)
+        self.lst_cibles.setCurrentRow(0)
