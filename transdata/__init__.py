@@ -10,11 +10,10 @@
 # ---------------------------------------------------------------------
 
 # PyQGIS
-from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtWidgets import QAction
 
 # Plugin package
-from .trsfgeom_form import TrsfGeomDialog
-from .ui.ui_trsfgeom import TrsfGeom  # ???
+from .ui.form_settings import FormSettings
 from .utils.sql_executor import SqlExecutor
 
 
@@ -26,7 +25,7 @@ class MinimalPlugin:
     def __init__(self, iface):
         self.iface = iface
         self.sql_xtor = SqlExecutor()
-        self.trsfgeom_form = TrsfGeom()
+        self.trsfgeom_form = FormSettings()
 
     def initGui(self):
         self.action = QAction("Go!", self.iface.mainWindow())
