@@ -37,12 +37,7 @@ class FormSettings(FORM_CLASS, QWidget):
         self.lbl_title.setText("Paramètres du plugin")
 
         # Connexion à la base de données
-        self.db = QtSql.QSqlDatabase.addDatabase("QPSQL")
-        # QPSQL = nom du pilote postgreSQL
-        self.db.setHostName("192.168.1.12")
-        self.db.setPort(5432)
-        self.db.setDatabaseName("bdcenpicardie")
-        self.db.setUserName("postgres")
+
         
         ok = self.db.open()
         if not ok:
