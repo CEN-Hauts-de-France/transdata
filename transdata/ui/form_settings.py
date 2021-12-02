@@ -12,6 +12,8 @@ from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets, QtSql
 from qgis.PyQt.QtWidgets import QWidget
 
+# Plugin package
+from transdata.utils.log_handler import PlgLogger
 
 # ############################################################################
 # ########## Globals ###############
@@ -32,6 +34,9 @@ class FormSettings(FORM_CLASS, QWidget):
     def __init__(self, parent=None):
         """Constructor."""
         super().__init__(parent)
+        self.log = PlgLogger().log
+        # initialisation de l'interface de la boite de dialogue
+        self.setupUi(self)
 
         self.setupUi(self)
         self.lbl_title.setText("Paramètres du plugin")
