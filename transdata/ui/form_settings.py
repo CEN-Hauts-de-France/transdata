@@ -43,7 +43,7 @@ class FormSettings(FORM_CLASS, QWidget):
         self.db.setPort(5432)
         self.db.setDatabaseName("bdcenpicardie")
         self.db.setUserName("postgres")
-        self.db.setPassword("burotec")
+        
         ok = self.db.open()
         if not ok:
             QtWidgets.QMessageBox.warning(
