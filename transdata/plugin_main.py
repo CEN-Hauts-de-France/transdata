@@ -5,8 +5,8 @@ from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QAction
 
 # Plugin package
-from .ui.form_settings import FormSettings
-from .utils.sql_executor import SqlExecutor
+from transdata.ui.form_settings import FormSettings
+from transdata.utils.log_handler import PlgLogger
 
 
 class CenTransdataPlugin:
@@ -19,8 +19,7 @@ class CenTransdataPlugin:
         :type iface: QgsInterface
         """
         self.iface = iface
-        self.sql_xtor = SqlExecutor()
-        self.trsfgeom_form = FormSettings()
+        self.log = PlgLogger().log
 
     def initGui(self):
         self.action = QAction("Go!", self.iface.mainWindow())
@@ -33,6 +32,19 @@ class CenTransdataPlugin:
 
     def run(self):
         # show the dialog
-        self.trsfgeom_form.show()
-        # Run the dialog event loop
-        #result = self.exec_()
+
+        # check s'il y a une couche active
+        active_layer = self.iface.activeLayer()
+        if not active_layer:
+            self.log(message="Aucune couche sélectionnée", log_level=2, push=True)
+            return
+
+        # check s'il y a des objets sélectionnés
+        selected_features = active_layer.selectedFeatures()
+        if not len(selected_features):
+            self.log(message="Aucun objet sélectionné", log_level=2, push=True)
+            return
+
+        # lancement de la fenêtre de configuration
+        self.trsfgeom_form = FormSettings()
+        self.trsfgeom_form.recup_selected_features(selected_features)
