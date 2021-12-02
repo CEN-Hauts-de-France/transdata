@@ -63,6 +63,9 @@ p, li { white-space: pre-wrap; }
      <height>22</height>
     </rect>
    </property>
+   <property name="currentText">
+    <string>Secteur</string>
+   </property>
    <item>
     <property name="text">
      <string>Secteur</string>
