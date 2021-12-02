@@ -8,9 +8,11 @@
 from pathlib import Path
 
 # PyQGIS
+from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry
-from qgis.PyQt import QtSql, QtWidgets, uic
+from qgis.PyQt import QtSql, uic
 from qgis.PyQt.QtWidgets import QWidget
+from qgis.utils import pluginDirectory
 
 # Plugin package
 from transdata.utils.log_handler import PlgLogger
@@ -38,6 +40,7 @@ class FormSettings(FORM_CLASS, QWidget):
         """Constructor."""
         super().__init__(parent)
         self.log = PlgLogger().log
+        self.plg_folder = pluginDirectory("transdata")
         # initialisation de l'interface de la boite de dialogue
         self.setupUi(self)
 
@@ -47,8 +50,14 @@ class FormSettings(FORM_CLASS, QWidget):
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
 
+    def recup_selected_features(self, selected_features: list):
+        self.selected_features = selected_features
+        self.show()
+
+
     def renvoie_base_cible(self):
-        """Retourne la base de données cible."""
+        """Retourne la base de données cible        
+        """
         for db_type in self.DB_TYPES:
             # retrouver les connections du type de base de données
             connections = (
@@ -61,8 +70,8 @@ class FormSettings(FORM_CLASS, QWidget):
             self.log(
                 message="Aucune connection de type {} trouvée".format(db_type),
                 log_level=1,
-                push=True
-            )
+                push=True,
+            )        # Run the dialog event loop
             return
 
         flag_connexion_reperee = False
@@ -81,16 +90,18 @@ class FormSettings(FORM_CLASS, QWidget):
         if not flag_connexion_reperee:
             self.cbb_database.setEnabled(True)
 
-
     def remplissage_liste(self):
         """Remplissage de la liste"""
+        with open(Path(self.plg_folder) / "sql/recup_sites.sql", "r") as f:
+            sql = f.read()
+
         if (
             self.cbx_typCible.currentData(self.cbx_typCible.currentIndex())
             == "Site CEN"
         ):
             self.lst_cibles.clear()
             queryFillList = QtSql.QSqlQuery(self.db)
-            qFillList = u"SELECT codesitep, nomsitep FROM bd_site_cen.site_cen_hdf ORDER BY codesitep"
+            qFillList = "SELECT codesitep, nomsitep FROM bd_site_cen.site_cen_hdf ORDER BY codesitep"
             ok = queryFillList.exec_(qFillList)
             while queryFillList.next():
                 # print (query.value(1).toPyDate().strftime("%Y-%m-%d"))
@@ -98,8 +109,10 @@ class FormSettings(FORM_CLASS, QWidget):
                     str(queryFillList.value(0)) + " / " + str(queryFillList.value(1))
                 )
             if not ok:
-                QtWidgets.QMessageBox.warning(
-                    self, "Alerte", u"Requête remplissage liste cibles ratée"
+                self.log(
+                    message="Requête remplissage liste cibles ratée",
+                    log_level=1,
+                    push=True,
                 )
         else:
             self.lst_cibles.clear()
