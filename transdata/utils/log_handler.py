@@ -22,13 +22,13 @@ class PlgLogger(logging.Handler):
         log_level: int = 0,
         push: bool = False,
     ):
-        """Send messages to QGIS messages windows and to the user as a message bar. \
+        """Send messages to QGIS messages windows and to the user as a message bar. 
         Plugin name is used as title.
 
         :param message: message to display
         :type message: str
-        :param application: name of the application sending the message. \
-        Defaults to __about__.__title__
+        :param application: name of the application sending the message.
+        Defaults to CEN Transdata.
         :type application: str, optional
         :param log_level: message level. Possible values: 0 (info), 1 (warning), \
         2 (critical), 3 (success), 4 (none - grey). Defaults to 0 (info)
