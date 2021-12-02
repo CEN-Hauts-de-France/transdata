@@ -42,18 +42,20 @@ def popo():
     print(selected)
     print(selected.uri())
     print(isinstance(selected.uri(), str))
+
+
 #    print(QgsDataSourceUri(selected.uri()).database())
 #    print(QgsDataSourceUri(selected.uri()).host())
 #    print(selected.configuration())
-    
-    # print(conn.uri.connectionInfo(True))
 
-    # lister les schémas
+# print(conn.uri.connectionInfo(True))
+
+# lister les schémas
 #    if conn.providerKey().startswith("postgr"):
 #        print("Schémas : ", conn.schemas())
 
-    # lister les tables
-    # print("Tables : ", [(t.defaultName(), str(t.flags())) for t in conn.tables()[:10]])
+# lister les tables
+# print("Tables : ", [(t.defaultName(), str(t.flags())) for t in conn.tables()[:10]])
 
 
 # la fenêtre de dialogue pour accueillir notre liste déroulante

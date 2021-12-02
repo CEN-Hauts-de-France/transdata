@@ -12,8 +12,12 @@ selected_features = active_layer.selectedFeatures()
 if not len(selected_features):
     print("Aucun objet sélectionné")
 
-print(f"{len(selected_features)} objets sélectionnés dans la couche {active_layer.name()}")
+print(
+    f"{len(selected_features)} objets sélectionnés dans la couche {active_layer.name()}"
+)
 
-memory_layer = active_layer.materialize(QgsFeatureRequest().setFilterFids(active_layer.selectedFeatureIds()))
+memory_layer = active_layer.materialize(
+    QgsFeatureRequest().setFilterFids(active_layer.selectedFeatureIds())
+)
 memory_layer.setName("youpi")
 QgsProject.instance().addMapLayer(memory_layer)

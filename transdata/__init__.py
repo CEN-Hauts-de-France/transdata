@@ -1,5 +1,6 @@
 #! python3  # noqa: E265
 
+
 def classFactory(iface):
     """Load the plugin class.
 
@@ -7,4 +8,5 @@ def classFactory(iface):
     :type iface: QgsInterface
     """
     from .plugin_main import CenTransdataPlugin
+
     return CenTransdataPlugin(iface)

@@ -8,7 +8,6 @@
 from pathlib import Path
 
 # PyQGIS
-from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry
 from qgis.PyQt import QtSql, uic
 from qgis.PyQt.QtWidgets import QWidget
@@ -54,23 +53,22 @@ class FormSettings(FORM_CLASS, QWidget):
         self.selected_features = selected_features
         self.show()
 
-
     def renvoie_base_cible(self):
-        """Retourne la base de données cible        
-        """
+        """Retourne la base de données cible"""
         for db_type in self.DB_TYPES:
             # retrouver les connections du type de base de données
             connections = (
                 QgsProviderRegistry.instance()
                 .providerMetadata(db_type)
-                .connections(cached=False))
+                .connections(cached=False)
+            )
 
         if not len(connections):
             self.log(
                 message="Aucune connection de type {} trouvée".format(db_type),
                 log_level=1,
                 push=True,
-            )        # Run the dialog event loop
+            )  # Run the dialog event loop
             return
 
         flag_connexion_reperee = False

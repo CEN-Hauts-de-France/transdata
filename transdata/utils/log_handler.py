@@ -22,7 +22,7 @@ class PlgLogger(logging.Handler):
         log_level: int = 0,
         push: bool = False,
     ):
-        """Send messages to QGIS messages windows and to the user as a message bar. 
+        """Send messages to QGIS messages windows and to the user as a message bar.
         Plugin name is used as title.
 
         :param message: message to display
