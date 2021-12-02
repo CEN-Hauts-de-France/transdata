@@ -63,8 +63,7 @@ class FormSettings(FORM_CLASS, QWidget):
             connections = (
                 QgsProviderRegistry.instance()
                 .providerMetadata(db_type)
-                .connections(cached=False)
-            )
+                .connections(cached=False))
 
         if not len(connections):
             self.log(
