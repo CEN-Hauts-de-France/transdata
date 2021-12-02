@@ -54,8 +54,7 @@ class FormSettings(FORM_CLASS, QWidget):
             connections = (
                 QgsProviderRegistry.instance()
                 .providerMetadata(db_type)
-                .connections(cached=False)
-            )
+                .connections(cached=False))
 
         if not len(connections):
             self.log(
@@ -80,7 +79,6 @@ class FormSettings(FORM_CLASS, QWidget):
 
         if not flag_connexion_reperee:
             self.cbb_database.setEnabled(True)
-
 
     def remplissage_liste(self):
         """Remplissage de la liste"""
