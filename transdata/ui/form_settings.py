@@ -8,8 +8,8 @@
 from pathlib import Path
 
 # PyQGIS
-from qgis.core import QgsProviderRegistry, QgsAbstractDatabaseProviderConnection
-from qgis.PyQt import QtSql, uic
+from qgis.core import QgsProviderRegistry
+from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
 
@@ -95,38 +95,6 @@ class FormSettings(FORM_CLASS, QWidget):
         if not flag_connexion_reperee:
             self.cbx_database.setEnabled(True)
 
-    def remplissage_liste_old(self):
-        """Remplissage de la liste"""
-        with open(Path(self.plg_folder) / "sql/recup_sites.sql", "r") as f:
-            sql = f.read()
-
-        result = self.connection.executeSql(sql)
-        print(self.connection)
-        print(result)
-
-        if (
-            self.cbx_table_cible.currentData(self.cbx_table_cible.currentIndex())
-            == "Site CEN"
-        ):
-            self.lst_cibles.clear()
-
-            # queryFillList = QtSql.QSqlQuery(self.db)
-            # qFillList = "SELECT codesitep, nomsitep FROM bd_site_cen.site_cen_hdf ORDER BY codesitep"
-            # ok = queryFillList.exec_(qFillList)
-            # while queryFillList.next():
-            #     # print (query.value(1).with open(Path(self.plg_folder) / "sql/recup_sites.sql", "r") as f:
-            sql = f.read()
-        # if not ok:
-        #     self.log(
-        #         message="Requête remplissage liste cibles ratée",
-        #         log_level=1,
-        #         push=True,
-        #     )
-        else:
-            self.lst_cibles.clear()
-            self.lst_cibles.addItem("Raté!!! ;-p")
-        self.lst_cibles.setCurrentRow(0)
-
     def remplissage_liste(self):
         """Récupérer la couche cible choisie par l'utilisateur.
         On récupère la connexion affichée dans la liste déroulante.
@@ -138,21 +106,16 @@ class FormSettings(FORM_CLASS, QWidget):
 
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
-        if table_cible == 'Secteur':
+        if table_cible == "Secteur":
             sql_path = "sql/recup_secteur.sql"
-        elif table_cible == 'Site CEN':
+        elif table_cible == "Site CEN":
             sql_path = "sql/recup_site.sql"
         else:
-            self.log(
-                message='Table inconnue',
-                log_level=1,
-                push=True
-            )
+            self.log(message="Table inconnue", log_level=1, push=True)
 
         with open(Path(self.plg_folder) / sql_path, "r") as f:
             sql = f.read()
-        
+
         result = connexion.executeSql(sql)
         for ligne in result:
             self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
-        
