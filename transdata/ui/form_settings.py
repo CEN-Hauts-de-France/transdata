@@ -34,6 +34,7 @@ class FormSettings(FORM_CLASS, QWidget):
 
     DB_CONN_NAMES = ("bdcen", "bdcen_admin", "CEN Picardie User - pgservice")
     DB_TYPES = ("postgres",)
+    OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -45,6 +46,7 @@ class FormSettings(FORM_CLASS, QWidget):
 
         # remplissage des widgets
         self.renvoie_base_cible()
+        self.cbx_table_cible.addItems(self.OPTION_TABLE_NAMES)
 
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
@@ -88,10 +90,10 @@ class FormSettings(FORM_CLASS, QWidget):
 
             if connection_name in self.DB_CONN_NAMES:
                 flag_connexion_reperee = True
-                self.cbb_database.setCurrentText(connection_name)
+                self.cbx_database.setCurrentText(connection_name)
 
         if not flag_connexion_reperee:
-            self.cbb_database.setEnabled(True)
+            self.cbx_database.setEnabled(True)
 
     def remplissage_liste_old(self):
         """Remplissage de la liste"""
@@ -103,7 +105,7 @@ class FormSettings(FORM_CLASS, QWidget):
         print(result)
 
         if (
-            self.cbx_typCible.currentData(self.cbx_typCible.currentIndex())
+            self.cbx_table_cible.currentData(self.cbx_table_cible.currentIndex())
             == "Site CEN"
         ):
             self.lst_cibles.clear()
@@ -132,10 +134,13 @@ class FormSettings(FORM_CLASS, QWidget):
         Remplissage de la liste de choix en fonction du choix de l'utilisateur
         Filtre sur l'emprise du canevas"""
 
-        table_cible = self.cbx_typCible.currentText()
-        connexion = self.cbb_database.itemData(self.cbb_database.currentIndex())
-        req = "SELECT PostGIS_Version();"
-        result = connexion.executeSql(req)
+        table_cible = self.cbx_table_cible.currentText()
+        connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
+        if table_cible == 'Secteur':
+            with open(Path(self.plg_folder) / "sql/recup_sites.sql", "r") as f:
+                sql = f.read()
+        #req = "SELECT PostGIS_Version();"
+        result = connexion.executeSql(sql)
         self.log(
                 message=result,
                 log_level=4,
