@@ -134,6 +134,8 @@ class FormSettings(FORM_CLASS, QWidget):
         Remplissage de la liste de choix en fonction du choix de l'utilisateur
         Filtre sur l'emprise du canevas"""
 
+        self.lst_cibles.clear()
+
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
         if table_cible == 'Secteur':
@@ -149,10 +151,8 @@ class FormSettings(FORM_CLASS, QWidget):
 
         with open(Path(self.plg_folder) / sql_path, "r") as f:
             sql = f.read()
-        #req = "SELECT PostGIS_Version();"
+        
         result = connexion.executeSql(sql)
-        self.log(
-                message=result,
-                log_level=4,
-            )
+        for ligne in result:
+            self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
         
