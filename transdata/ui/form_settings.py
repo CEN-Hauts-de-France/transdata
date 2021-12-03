@@ -82,7 +82,7 @@ class FormSettings(FORM_CLASS, QWidget):
         flag_connexion_reperee = False
         for connection_name in connections:
 
-            self.cbb_database.addItem(
+            self.cbx_database.addItem(
                 connections.get(connection_name).icon(),
                 connection_name,
                 connections.get(connection_name),
@@ -137,11 +137,22 @@ class FormSettings(FORM_CLASS, QWidget):
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
         if table_cible == 'Secteur':
-            with open(Path(self.plg_folder) / "sql/recup_sites.sql", "r") as f:
-                sql = f.read()
+            sql_path = "sql/recup_secteur.sql"
+        elif table_cible == 'Site CEN':
+            sql_path = "sql/recup_site.sql"
+        else:
+            self.log(
+                message='Table inconnue',
+                log_level=1,
+                push=True
+            )
+
+        with open(Path(self.plg_folder) / sql_path, "r") as f:
+            sql = f.read()
         #req = "SELECT PostGIS_Version();"
         result = connexion.executeSql(sql)
         self.log(
                 message=result,
                 log_level=4,
             )
+        
