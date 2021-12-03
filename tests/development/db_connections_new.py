@@ -35,7 +35,7 @@ for db_type in db_types:
 def popo():
     print("hey")
     print(cbb_db_connections.currentText())
-    conn = dico_connections_for_combobox[cbb_db_connections.currentText()][1]
+    conn = dico_connections_for_combobox.get(cbb_db_connections.currentText())[1]
     print(conn.providerKey(), conn.icon())
 
     selected = cbb_db_connections.itemData(cbb_db_connections.currentIndex())
@@ -43,6 +43,9 @@ def popo():
     print(selected.uri())
     print(isinstance(selected.uri(), str))
 
+    req ='SELECT PostGIS_Version();'
+    result = conn.executeSql(req)
+    print(result)
 
 #    print(QgsDataSourceUri(selected.uri()).database())
 #    print(QgsDataSourceUri(selected.uri()).host())
