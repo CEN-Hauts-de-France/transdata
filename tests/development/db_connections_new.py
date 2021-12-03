@@ -43,9 +43,10 @@ def popo():
     print(selected.uri())
     print(isinstance(selected.uri(), str))
 
-    req ='SELECT PostGIS_Version();'
+    req = "SELECT PostGIS_Version();"
     result = conn.executeSql(req)
     print(result)
+
 
 #    print(QgsDataSourceUri(selected.uri()).database())
 #    print(QgsDataSourceUri(selected.uri()).host())
