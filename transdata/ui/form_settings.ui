@@ -70,17 +70,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Gîte Chiro</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Site CEN</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Sous-Site CEN</string>
         </property>
        </item>
       </widget>
