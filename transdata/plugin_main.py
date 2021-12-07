@@ -46,7 +46,7 @@ class CenTransdataPlugin:
             return
 
         # moissonnage des id
-        Mesid = ','.join([unicode(f['objectid']) for f in selected_features])
+        Mesid = ','.join([str(f['objectid']) for f in selected_features])
         print(Mesid)
 
         # lancement de la fenêtre de configuration
