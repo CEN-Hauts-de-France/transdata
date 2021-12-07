@@ -45,10 +45,11 @@ class CenTransdataPlugin:
             self.log(message="Aucun objet sélectionné", log_level=2, push=True)
             return
 
-        #moissonnage des id
-        Mesid = ', '.join([unicode(f['objectid']) for f in selected_features])
+        # moissonnage des id
+        Mesid = ','.join([unicode(f['objectid']) for f in selected_features])
         print(Mesid)
-        
+
         # lancement de la fenêtre de configuration
         self.trsfgeom_form = FormSettings()
         self.trsfgeom_form.recup_selected_features(selected_features)
+        self.trsfgeom_form.recup_selected_mesid(Mesid)

@@ -50,10 +50,15 @@ class FormSettings(FORM_CLASS, QWidget):
 
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
+        self.btn_exec.clicked.connect(self.btn_executer_click)
 
     def recup_selected_features(self, selected_features: list):
         self.selected_features = selected_features
         self.show()
+
+    def recup_selected_mesid(self, Mesid:str):
+        self.Mesid = Mesid
+               
 
     def renvoie_base_cible(self):
         """Retourne la base de données cible.
@@ -119,3 +124,6 @@ class FormSettings(FORM_CLASS, QWidget):
         result = connexion.executeSql(sql)
         for ligne in result:
             self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
+
+    def btn_executer_click(self):
+        print('Mesid = '+self.Mesid)
