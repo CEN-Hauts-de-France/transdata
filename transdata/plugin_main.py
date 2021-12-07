@@ -46,8 +46,9 @@ class CenTransdataPlugin:
             return
 
         #moissonnage des id
-        Mesid = ', '.join([f[objectid] for f in selected_features])
-         
+        Mesid = ', '.join([unicode(f['objectid']) for f in selected_features])
+        print(Mesid)
+        
         # lancement de la fenêtre de configuration
         self.trsfgeom_form = FormSettings()
         self.trsfgeom_form.recup_selected_features(selected_features)
