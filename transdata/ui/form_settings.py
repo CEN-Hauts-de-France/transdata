@@ -58,9 +58,13 @@ class FormSettings(FORM_CLASS, QWidget):
 
     def recup_selected_mesid(self, Mesid: str):
         self.Mesid = Mesid
+               
+    def recup_active_layer_name(self, Layer_name:str):
+        self.Layer_name = Layer_name
 
     def renvoie_base_cible(self):
         """Retourne la base de données cible.
+
         Liste les connexions des types de bases de données définis en attribut de classe.
         Remplit la liste déroulante.
         Vérifie que la connexion par défaut est bien présente :
@@ -123,5 +127,8 @@ class FormSettings(FORM_CLASS, QWidget):
         for ligne in result:
             self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
 
+
+
     def btn_executer_click(self):
         print('Mesid = '+self.Mesid)
+        print('Macouche = '+self.Layer_name)
