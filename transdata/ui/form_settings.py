@@ -56,7 +56,7 @@ class FormSettings(FORM_CLASS, QWidget):
         self.selected_features = selected_features
         self.show()
 
-    def recup_selected_mesid(self, Mesid:str):
+    def recup_selected_mesid(self, Mesid: str):
         self.Mesid = Mesid
                
 
