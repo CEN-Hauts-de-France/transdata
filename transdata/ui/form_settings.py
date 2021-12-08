@@ -58,11 +58,9 @@ class FormSettings(FORM_CLASS, QWidget):
 
     def recup_selected_mesid(self, Mesid: str):
         self.Mesid = Mesid
-               
 
     def renvoie_base_cible(self):
         """Retourne la base de données cible.
-
         Liste les connexions des types de bases de données définis en attribut de classe.
         Remplit la liste déroulante.
         Vérifie que la connexion par défaut est bien présente :
