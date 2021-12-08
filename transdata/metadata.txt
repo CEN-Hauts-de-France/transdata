@@ -1,9 +1,0 @@
-[general]
-name= Transform Geom
-description=Transforme dans BDCEN dess géométries ponctuelles en données attributaire associées à une géométrie surfacique, selon le choix de l'utilsateur.
-about=Pour le CEN Hauts de France, 2021
-version=10.1
-qgisMinimumVersion=3.0
-author=Vincent Damoy
-email=v.damoy@cen-hautsdefrance.org
-repository=URL to the code repository
