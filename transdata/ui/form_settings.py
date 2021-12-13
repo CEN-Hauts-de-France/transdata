@@ -45,8 +45,12 @@ class FormSettings(FORM_CLASS, QWidget):
         self.setupUi(self)
 
         # remplissage des widgets
+            # "cbx_database" (choix de la connexion à la base)
         self.renvoie_base_cible()
+            # cbx_table_cible (liste de choix pour que l'utilisateur sélctionne l'entité cible)
         self.cbx_table_cible.addItems(self.OPTION_TABLE_NAMES)
+            # lbl_nbObjSel_value (label indiquant le niombre de points sélectionnés)
+        self.lbl_nbObjSel_value.setText(self.iface.activeLayer().selectedFeatureCount())
 
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
@@ -122,6 +126,7 @@ class FormSettings(FORM_CLASS, QWidget):
 
         with open(Path(self.plg_folder) / sql_path, "r") as f:
             sql = f.read()
+            print(sql)
 
         result = connexion.executeSql(sql)
         for ligne in result:
