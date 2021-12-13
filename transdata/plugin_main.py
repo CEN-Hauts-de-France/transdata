@@ -60,7 +60,7 @@ class CenTransdataPlugin:
         Mesid = ','.join([str(f['objectid']) for f in selected_features])
         print(Mesid)
 
-        # Filtrer sur l'emprise courante du canevas
+         # Filtrer sur l'emprise courante du canevas
         #extent = iface.mapCanvas().extent()
         #request = QgsFeatureRequest()
         #request.setFilterRect(extent)
@@ -69,7 +69,7 @@ class CenTransdataPlugin:
         #    print(feature['identifiant'])
 
         # lancement de la fenêtre de configuration
-        self.trsfgeom_form = FormSettings()
+        self.trsfgeom_form = FormSettings(self.iface)
         self.trsfgeom_form.recup_selected_features(selected_features)
         self.trsfgeom_form.recup_selected_mesid(Mesid)
         self.trsfgeom_form.recup_active_layer_name(Layer_Name)

@@ -8,6 +8,7 @@
 from pathlib import Path
 
 # PyQGIS
+from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
@@ -36,21 +37,28 @@ class FormSettings(FORM_CLASS, QWidget):
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
-    def __init__(self, parent=None):
+    def __init__(self, iface: QgisInterface, parent=None):
         """Constructor."""
         super().__init__(parent)
         self.log = PlgLogger().log
         self.plg_folder = pluginDirectory("transdata")
         # initialisation de l'interface de la boite de dialogue
         self.setupUi(self)
+        """ 
+        :param iface: An interface instance that will be passed to this \
+        class which provides the hook by which you can manipulate the QGIS \
+        application at run time.
+        :type iface: QgsInterface
+        """
+        self.iface = iface
 
         # remplissage des widgets
             # "cbx_database" (choix de la connexion à la base)
         self.renvoie_base_cible()
             # cbx_table_cible (liste de choix pour que l'utilisateur sélctionne l'entité cible)
         self.cbx_table_cible.addItems(self.OPTION_TABLE_NAMES)
-            # lbl_nbObjSel_value (label indiquant le niombre de points sélectionnés)
-        self.lbl_nbObjSel_value.setText(self.iface.activeLayer().selectedFeatureCount())
+            # lbl_nbObjSel_value (label indiquant le nombre de points sélectionnés)
+        self.lbl_nbObjSel_value.setText(str(self.iface.activeLayer().selectedFeatureCount()))
 
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
