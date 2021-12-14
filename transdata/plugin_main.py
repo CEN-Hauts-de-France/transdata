@@ -2,6 +2,7 @@
 
 # PyQGIS
 from qgis.gui import QgisInterface
+from qgis.core import QgsFeatureRequest
 from qgis.PyQt.QtWidgets import QAction
 
 # Plugin package
@@ -60,13 +61,15 @@ class CenTransdataPlugin:
         Mesid = ','.join([str(f['objectid']) for f in selected_features])
         print(Mesid)
 
-         # Filtrer sur l'emprise courante du canevas
-        #extent = iface.mapCanvas().extent()
-        #request = QgsFeatureRequest()
-        #request.setFilterRect(extent)
-        #layer = iface.activeLayer()
-        #for feature in layer.getFeatures(request):
-        #    print(feature['identifiant'])
+        # Filtrer sur l'emprise courante du canevas
+        # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-) 
+        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord?
+        extent = self.iface.mapCanvas().extent()
+        request = QgsFeatureRequest()
+        request.setFilterRect(extent)
+        layer = self.iface.activeLayer()
+        for feature in layer.getFeatures(request):
+            print(feature["objectid"])
 
         # lancement de la fenêtre de configuration
         self.trsfgeom_form = FormSettings(self.iface)
