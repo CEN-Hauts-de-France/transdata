@@ -9,7 +9,7 @@ from pathlib import Path
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceURI, QgsVectorLayer
+from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, QgsVectorLayer, QgsProject
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
@@ -131,35 +131,45 @@ class FormSettings(FORM_CLASS, QWidget):
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
         #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
-        self.uri = QgsDataSourceURI()
+        self.uri = QgsDataSourceUri()
         # configure l'adresse du serveur (hôte), le port, le nom de la base de données, l'utilisateur et le mot de passe.
-        self.uri.setConnection("192.168.0.99", "5432", "sitescsn", "postgres", authConfigId = 'dme471m')
+        self.uri.setConnection("192.168.1.2", "5432", "bdcenpicardie", '', '', False,'dme471m')   #5ba2lc0
+        print(str(self.uri.uri()))
+        self.uri.setDataSource("bdfauneflore", "secteur", "geom")
+        self.ctrs_secteurs=QgsVectorLayer(self.uri.uri(), "contours_secteurs", "postgres")
+        print(self.ctrs_secteurs)
+        root = QgsProject.instance().layerTreeRoot()
+        if self.ctrs_secteurs.featureCount()>0:
+           QgsProject.instance().addMapLayer(self.ctrs_secteurs, False)
+           root.insertLayer(0, self.ctrs_secteurs)
+        for feature in self.ctrs_secteurs.getFeatures(request):
+            print('item='+str(feature["objectid"]))
+            self.lst_cibles.addItem("{} ({})".format("secteur_id", "lieu_dit"))
 
         if table_cible == "Secteur":
-            sql_path = "sql/recup_secteur.sql"
-#            layer = ...
-#            if not layer :
-#                add layer to legend 
+             sql_path = "sql/recup_secteur.sql"
         elif table_cible == "Site CEN":
             sql_path = "sql/recup_site.sql"
         else:
             self.log(message="Table inconnue", log_level=1, push=True)
 
-        with open(Path(self.plg_folder) / sql_path, "r") as f:
-            sql = f.read()
-            print(sql)
+        
 
-        result = connexion.executeSql(sql)
-        for ligne in result:
-            self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
+       # with open(Path(self.plg_folder) / sql_path, "r") as f:
+       #     sql = f.read()
+       #     print(sql)
+
+       # result = connexion.executeSql(sql)
+       # for ligne in result:
+       #     self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
 
         # Filtrer sur l'emprise courante du canevas
         # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-) 
         # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord?
 
         #layer = self.iface.activeLayer()
-        for feature in layer.getFeatures(request):
-            print(feature["objectid"])
+      #  for feature in layer.getFeatures(request):
+      #      print(feature["objectid"])
 
 
     def btn_executer_click(self):
