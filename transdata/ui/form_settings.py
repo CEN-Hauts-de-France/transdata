@@ -9,7 +9,7 @@ from pathlib import Path
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry, QgsVectorLayer
+from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsVectorLayer
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
@@ -33,7 +33,7 @@ FORM_CLASS, _ = uic.loadUiType(
 class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
-    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "CEN Picardie User - pgservice")
+    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "Serveur carto Linux - authdb")
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
@@ -133,7 +133,8 @@ class FormSettings(FORM_CLASS, QWidget):
         #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceURI()
         # configure l'adresse du serveur (hôte), le port, le nom de la base de données, l'utilisateur et le mot de passe.
-#       self.uri.setConnection("192.168.0.99", "5432", "sitescsn", "postgres", "OHMONDIEUILFAUTPASLEMETTRE")
+        self.uri.setConnection("192.168.0.99", "5432", "sitescsn", "postgres", authConfigId = 'dme471m')
+
         if table_cible == "Secteur":
             sql_path = "sql/recup_secteur.sql"
 #            layer = ...

@@ -2,7 +2,6 @@
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsFeatureRequest
 from qgis.PyQt.QtWidgets import QAction
 
 # Plugin package
