@@ -9,7 +9,7 @@ from pathlib import Path
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry
+from qgis.core import QgsProviderRegistry, QgsVectorLayer
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
@@ -123,10 +123,22 @@ class FormSettings(FORM_CLASS, QWidget):
 
         self.lst_cibles.clear()
 
+        # Récupération de l'étendue du canevas
+        extent = self.iface.mapCanvas().extent()
+        request = QgsFeatureRequest()
+        request.setFilterRect(extent)
+
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
+        #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
+        self.uri = QgsDataSourceURI()
+        # configure l'adresse du serveur (hôte), le port, le nom de la base de données, l'utilisateur et le mot de passe.
+#       self.uri.setConnection("192.168.0.10", "5432", "sitescsn", "postgres", "OHMONDIEUILFAUTPASLEMETTRE")
         if table_cible == "Secteur":
             sql_path = "sql/recup_secteur.sql"
+#            layer = ...
+#            if not layer :
+#                add layer to legend 
         elif table_cible == "Site CEN":
             sql_path = "sql/recup_site.sql"
         else:
@@ -140,6 +152,13 @@ class FormSettings(FORM_CLASS, QWidget):
         for ligne in result:
             self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
 
+        # Filtrer sur l'emprise courante du canevas
+        # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-) 
+        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord?
+
+        #layer = self.iface.activeLayer()
+        for feature in layer.getFeatures(request):
+            print(feature["objectid"])
 
 
     def btn_executer_click(self):
