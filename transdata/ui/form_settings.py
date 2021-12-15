@@ -9,7 +9,7 @@ from pathlib import Path
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsVectorLayer
+from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceURI, QgsVectorLayer
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
