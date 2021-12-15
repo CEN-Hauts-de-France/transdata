@@ -133,7 +133,7 @@ class FormSettings(FORM_CLASS, QWidget):
         #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceURI()
         # configure l'adresse du serveur (hôte), le port, le nom de la base de données, l'utilisateur et le mot de passe.
-#       self.uri.setConnection("192.168.0.10", "5432", "sitescsn", "postgres", "OHMONDIEUILFAUTPASLEMETTRE")
+#       self.uri.setConnection("192.168.0.99", "5432", "sitescsn", "postgres", "OHMONDIEUILFAUTPASLEMETTRE")
         if table_cible == "Secteur":
             sql_path = "sql/recup_secteur.sql"
 #            layer = ...

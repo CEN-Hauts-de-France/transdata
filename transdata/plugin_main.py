@@ -61,6 +61,19 @@ class CenTransdataPlugin:
         Mesid = ','.join([str(f['objectid']) for f in selected_features])
         print(Mesid)
 
+<<<<<<< HEAD
+=======
+        # Filtrer sur l'emprise courante du canevas
+        # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-)  de rien :)
+        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord? oui c'est bien çà :)
+        extent = self.iface.mapCanvas().extent()
+        request = QgsFeatureRequest()
+        request.setFilterRect(extent)
+        layer = self.iface.activeLayer()
+        for feature in layer.getFeatures(request):
+            print(feature["objectid"])
+
+>>>>>>> f9b25a9a0cffcdd9cea570ea0d5ec931da2360f2
         # lancement de la fenêtre de configuration
         self.trsfgeom_form = FormSettings(self.iface)
         self.trsfgeom_form.recup_selected_features(selected_features)
