@@ -63,7 +63,7 @@ class CenTransdataPlugin:
 
         # Filtrer sur l'emprise courante du canevas
         # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-) 
-        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord?
+        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord? oui c'est bien çà :)
         extent = self.iface.mapCanvas().extent()
         request = QgsFeatureRequest()
         request.setFilterRect(extent)
