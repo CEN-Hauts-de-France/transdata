@@ -130,28 +130,34 @@ class FormSettings(FORM_CLASS, QWidget):
 
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
-        #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
-        self.uri = QgsDataSourceUri()
-        # configure l'adresse du serveur (hôte), le port, le nom de la base de données, l'utilisateur et le mot de passe.
-        self.uri.setConnection("192.168.1.2", "5432", "bdcenpicardie", '', '', False,'dme471m')   #5ba2lc0
-        print(str(self.uri.uri()))
-        self.uri.setDataSource("bdfauneflore", "secteur", "geom")
-        self.ctrs_secteurs=QgsVectorLayer(self.uri.uri(), "contours_secteurs", "postgres")
-        print(self.ctrs_secteurs)
-        root = QgsProject.instance().layerTreeRoot()
-        if self.ctrs_secteurs.featureCount()>0:
-           QgsProject.instance().addMapLayer(self.ctrs_secteurs, False)
-           root.insertLayer(0, self.ctrs_secteurs)
-        for feature in self.ctrs_secteurs.getFeatures(request):
-            print('item='+str(feature["objectid"]))
-            self.lst_cibles.addItem("{} ({})".format("secteur_id", "lieu_dit"))
 
         if table_cible == "Secteur":
-             sql_path = "sql/recup_secteur.sql"
+            #sql_path = "sql/recup_secteur.sql"
+            tabcibname = 'secteur'
+            tabcibpkey = 'objectid'
         elif table_cible == "Site CEN":
-            sql_path = "sql/recup_site.sql"
+            #sql_path = "sql/recup_site.sql"
+            tabcibname = 'view_transdata'
+            tabcibpkey = 'row_number'
         else:
             self.log(message="Table inconnue", log_level=1, push=True)
+
+        #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
+        self.uri = QgsDataSourceUri()
+        # configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
+        # le SSL ou non, l'utilisateur et le mot de passe (ou, comme cv'est le cas ici, le authConfigId).
+        self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
+        self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
+        self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
+        root = QgsProject.instance().layerTreeRoot()
+        if self.ctrs_cibles.featureCount()>0:
+           QgsProject.instance().addMapLayer(self.ctrs_cibles, False)
+           root.insertLayer(0, self.ctrs_cibles)
+        for feature in self.ctrs_cibles.getFeatures(request):
+            attrs=feature.attributes()
+            self.lst_cibles.addItem("{} ({})".format(attrs[1], attrs[2]))
+        tabcibname = tabcibpkey = ''
+        
 
         
 
