@@ -33,6 +33,7 @@ FORM_CLASS, _ = uic.loadUiType(
 class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
+    # Initialisations
     DB_CONN_NAMES = ("bdcen", "bdcen_admin", "Serveur carto Linux - authdb")
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
@@ -40,9 +41,11 @@ class FormSettings(FORM_CLASS, QWidget):
     def __init__(self, iface: QgisInterface, parent=None):
         """Constructor."""
         super().__init__(parent)
+        # Utilisation du module log_handler pour envoyer ds messages aux utilisateurs
         self.log = PlgLogger().log
+        # Instanciation du chemin vers le dossier du plugion sur le PC
         self.plg_folder = pluginDirectory("transdata")
-        # initialisation de l'interface de la boite de dialogue
+        # Initialisation de l'interface de la boite de dialogue
         self.setupUi(self)
         """ 
         :param iface: An interface instance that will be passed to this \
@@ -53,11 +56,11 @@ class FormSettings(FORM_CLASS, QWidget):
         self.iface = iface
 
         # remplissage des widgets
-            # "cbx_database" (choix de la connexion à la base)
+        #    "cbx_database" (choix de la connexion à la base)
         self.renvoie_base_cible()
-            # cbx_table_cible (liste de choix pour que l'utilisateur sélctionne l'entité cible)
+        #    cbx_table_cible (liste de choix pour que l'utilisateur sélctionne l'entité cible)
         self.cbx_table_cible.addItems(self.OPTION_TABLE_NAMES)
-            # lbl_nbObjSel_value (label indiquant le nombre de points sélectionnés)
+        #    lbl_nbObjSel_value (label indiquant le nombre de points sélectionnés)
         self.lbl_nbObjSel_value.setText(str(self.iface.activeLayer().selectedFeatureCount()))
 
         # connexion des signaux
@@ -65,13 +68,16 @@ class FormSettings(FORM_CLASS, QWidget):
         self.btn_exec.clicked.connect(self.btn_executer_click)
 
     def recup_selected_features(self, selected_features: list):
+        # Récupération de la liste des entités sélectionnées depuis main_plugin.py
         self.selected_features = selected_features
         self.show()
 
     def recup_selected_mesid(self, Mesid: str):
+        # Récupération des ID des entités sélectionnées depuis main_plugin.py
         self.Mesid = Mesid
                
     def recup_active_layer_name(self, Layer_name:str):
+        # Recupération du nom de la couche active depuis main_plugin.py
         self.Layer_name = Layer_name
 
     def renvoie_base_cible(self):
@@ -89,7 +95,7 @@ class FormSettings(FORM_CLASS, QWidget):
                 .providerMetadata(db_type)
                 .connections(cached=False)
             )
-
+        # Si aucune connexion trouvée...
         if not len(connections):
             self.log(
                 message="Aucune connexion de type {} trouvée".format(db_type),
@@ -99,6 +105,7 @@ class FormSettings(FORM_CLASS, QWidget):
             return
 
         flag_connexion_reperee = False
+        # Ajout des connexions trouvées dans le profil de QGIS à la combobox de choix
         for connection_name in connections:
 
             self.cbx_database.addItem(
@@ -107,19 +114,21 @@ class FormSettings(FORM_CLASS, QWidget):
                 connections.get(connection_name),
             )
 
+            # Si le nom d'une des connexions repéres se trouve dans la liste DB_CONN_NAMES, alors
+            # la combobox est bloquée dessus
             if connection_name in self.DB_CONN_NAMES:
                 flag_connexion_reperee = True
                 self.cbx_database.setCurrentText(connection_name)
-
+        # Si aucune connexion n'est listée dans DB_CONN_NAMES, on laisse l'utilisateur en choisir une.
         if not flag_connexion_reperee:
             self.cbx_database.setEnabled(True)
 
     def remplissage_liste(self):
-        """Récupérer la couche cible choisie par l'utilisateur.
+        """Récupérer la couche cible choisie par l'utilisateur ("view_transdata" ou "secteur").
         On récupère la connexion affichée dans la liste déroulante.
-        On lance la requête qui va récupérer des lignes dans la vue "view_transdata" et la table "secteurs" (dans le schéma bdfauneflore)
-        Remplissage de la liste de choix en fonction du choix de l'utilisateur
-        Filtre sur l'emprise du canevas"""
+        On affiche la couche choisie, puis on la filtre géoégraphiquement en fonction du canevas de QGIS.
+        Remplissage de la liste de choix par les items filtrés de la couche affichée
+        """
 
         self.lst_cibles.clear()
 
@@ -131,53 +140,51 @@ class FormSettings(FORM_CLASS, QWidget):
         table_cible = self.cbx_table_cible.currentText()
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
-        if table_cible == "Secteur":
-            #sql_path = "sql/recup_secteur.sql"
-            tabcibname = 'secteur'
-            tabcibpkey = 'objectid'
-        elif table_cible == "Site CEN":
-            #sql_path = "sql/recup_site.sql"
-            tabcibname = 'view_transdata'
-            tabcibpkey = 'row_number'
-        else:
-            self.log(message="Table inconnue", log_level=1, push=True)
-
+        
         #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceUri()
         # configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
-        # le SSL ou non, l'utilisateur et le mot de passe (ou, comme cv'est le cas ici, le authConfigId).
+        # le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
+        # Création de la couche ctrs_cible dans QGIS
         self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
+        # Ajout de la couche en haut de la table des matières de QGIS
         root = QgsProject.instance().layerTreeRoot()
         if self.ctrs_cibles.featureCount()>0:
            QgsProject.instance().addMapLayer(self.ctrs_cibles, False)
            root.insertLayer(0, self.ctrs_cibles)
+        # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
             attrs=feature.attributes()
             self.lst_cibles.addItem("{} ({})".format(attrs[1], attrs[2]))
         tabcibname = tabcibpkey = ''
-        
-
-        
-
-       # with open(Path(self.plg_folder) / sql_path, "r") as f:
-       #     sql = f.read()
-       #     print(sql)
-
-       # result = connexion.executeSql(sql)
-       # for ligne in result:
-       #     self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
-
-        # Filtrer sur l'emprise courante du canevas
-        # Nota VD, 14/12/21 : Ca, ça marche. Merci Marie! ;-) 
-        # en vrai, on veut filtrer la couche des secteurs/sites, on est d'accord?
-
-        #layer = self.iface.activeLayer()
-      #  for feature in layer.getFeatures(request):
-      #      print(feature["objectid"])
 
 
     def btn_executer_click(self):
         print('Mesid = '+self.Mesid)
         print('Macouche = '+self.Layer_name)
+
+
+    # Le code commenté ci-dessous est pour mémoire : en fonction du choix de l'utilisateur, on utilise une requête SQL différente.  
+    # Celles-ci sont stockées dans des fichiers SQL.
+    # Le fichier est lu, et 2 colonnes du résultat de la requête sont utilisés pour remplir la liste de choix.
+    # Je n'utilise plus ce code car je suis obligé d'importer les couches dans QGIS pour pouvoir les filtrer géogréphiquement.
+    # -> plus besoin des requêtes, stockées ou non dans un fichier.
+
+    # if table_cible == "Secteur":
+    #     #sql_path = "sql/recup_secteur.sql"
+    # elif table_cible == "Site CEN":
+    #     #sql_path = "sql/recup_site.sql"
+    # else:
+    #     self.log(message="Table inconnue", log_level=1, push=True)
+
+    # with open(Path(self.plg_folder) / sql_path, "r") as f:
+    #     sql = f.read()
+    #     print(sql)
+
+    # result = connexion.executeSql(sql)
+    # for ligne in result:
+    #     self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
+
+
