@@ -7,6 +7,9 @@
 # standard
 from pathlib import Path
 
+#Python
+import psycopg2
+
 # PyQGIS
 from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, QgsVectorLayer, QgsProject
@@ -137,7 +140,15 @@ class FormSettings(FORM_CLASS, QWidget):
         request = QgsFeatureRequest()
         request.setFilterRect(extent)
 
+        # Définition des variables "nom de la table et "clé primaire de la table" 
+        # en fonction du choix de la table cible par l'utilisateur.
         table_cible = self.cbx_table_cible.currentText()
+        if table_cible == 'Secteur' :
+            tabcibname = 'secteur'
+            tabcibpkey = "objectid"
+        elif table_cible == 'Site CEN' :
+            tabcibname = 'view_transdata'
+            tabcibpkey = "row_number"objectid
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
         
