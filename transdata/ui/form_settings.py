@@ -143,12 +143,16 @@ class FormSettings(FORM_CLASS, QWidget):
         # Définition des variables "nom de la table et "clé primaire de la table" 
         # en fonction du choix de la table cible par l'utilisateur.
         table_cible = self.cbx_table_cible.currentText()
-        if table_cible == 'Secteur' :
+        if table_cible == 'Secteur':
             tabcibname = 'secteur'
             tabcibpkey = "objectid"
-        elif table_cible == 'Site CEN' :
+            tabcibcol1 = 'secteur_id'
+            tabcibcol2 = 'lieu_dit'
+        elif table_cible == 'Site CEN':
             tabcibname = 'view_transdata'
-            tabcibpkey = "row_number"objectid
+            tabcibpkey = "row_number"
+            tabcibcol1 = 'identifiant'
+            tabcibcol2 = 'nom'
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
         
@@ -167,9 +171,9 @@ class FormSettings(FORM_CLASS, QWidget):
            root.insertLayer(0, self.ctrs_cibles)
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
-            attrs=feature.attributes()
-            self.lst_cibles.addItem("{} ({})".format(attrs[1], attrs[2]))
-        tabcibname = tabcibpkey = ''
+            #attrs=feature.attributes()
+            self.lst_cibles.addItem("{} ({})".format(feature[tabcibcol1], feature[tabcibcol2]))
+        tabcibname = tabcibpkey = tabcibcol1 = tabcibcol2 = ''
 
 
     def btn_executer_click(self):
