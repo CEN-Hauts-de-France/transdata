@@ -155,20 +155,27 @@ class FormSettings(FORM_CLASS, QWidget):
             tabcibcol2 = 'nom'
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
-        
+
+
         #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceUri()
-        # configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
+        # setConnection configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
         # le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
+        # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
+        # la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
         # Création de la couche ctrs_cible dans QGIS
         self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
-        # Ajout de la couche en haut de la table des matières de QGIS
+        # Appel de la table des matières de QGIS dans la variable root
         root = QgsProject.instance().layerTreeRoot()
-        if self.ctrs_cibles.featureCount()>0:
-           QgsProject.instance().addMapLayer(self.ctrs_cibles, False)
-           root.insertLayer(0, self.ctrs_cibles)
+        # Création d'une couche temporaire à partir de ctrs_cibles, en filtrant sur l'étendue du canevas ("extent")
+        # C'est ce que fait "materialize" : cela matérialise la requête dans une couche de type "memory".
+        self.ctrs_cible_canvas = self.ctrs_cibles.materialize(QgsFeatureRequest().setFilterRect(extent))
+        # S'il y a quelque-chose dans ctrs_cible_canvas, alors on l'ajoute au projet et on l'affiche en haut de la table des matières.
+        if self.ctrs_cible_canvas.featureCount()>0:
+           QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
+           root.insertLayer(0, self.ctrs_cible_canvas)
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
             #attrs=feature.attributes()
