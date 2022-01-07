@@ -37,7 +37,7 @@ class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
     # Initialisations
-    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "Serveur carto Linux - authdb")
+    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "Serveur local pg12 - service")
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
@@ -161,7 +161,9 @@ class FormSettings(FORM_CLASS, QWidget):
         self.uri = QgsDataSourceUri()
         # setConnection configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
         # le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
-        self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
+        # self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
+        #essai avec le service local_database, créé dans le fichier .pg_service.conf
+        self.uri.setConnection("local_database", "dev_bdcenpicardie", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
         # la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
@@ -181,7 +183,6 @@ class FormSettings(FORM_CLASS, QWidget):
             #attrs=feature.attributes()
             self.lst_cibles.addItem("{} ({})".format(feature[tabcibcol1], feature[tabcibcol2]))
         tabcibname = tabcibpkey = tabcibcol1 = tabcibcol2 = ''
-
 
     def btn_executer_click(self):
         print('Mesid = '+self.Mesid)
