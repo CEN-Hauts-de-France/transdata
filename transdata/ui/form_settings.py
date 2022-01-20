@@ -150,7 +150,7 @@ class FormSettings(FORM_CLASS, QWidget):
             tabcibcol2 = 'lieu_dit'
         elif table_cible == 'Site CEN':
             tabcibname = 'view_transdata'
-            tabcibpkey = "row_number"
+            tabcibpkey = "objectid"
             tabcibcol1 = 'identifiant'
             tabcibcol2 = 'nom'
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
