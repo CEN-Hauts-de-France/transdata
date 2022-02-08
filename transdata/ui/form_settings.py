@@ -7,7 +7,7 @@
 # standard
 from pathlib import Path
 
-#Python
+# Python
 import psycopg2
 
 # PyQGIS
@@ -70,18 +70,22 @@ class FormSettings(FORM_CLASS, QWidget):
         self.btn_recherch.clicked.connect(self.remplissage_liste)
         self.btn_exec.clicked.connect(self.btn_executer_click)
 
+
     def recup_selected_features(self, selected_features: list):
         # Récupération de la liste des entités sélectionnées depuis main_plugin.py
         self.selected_features = selected_features
         self.show()
 
+
     def recup_selected_mesid(self, Mesid: str):
         # Récupération des ID des entités sélectionnées depuis main_plugin.py
         self.Mesid = Mesid
                
-    def recup_active_layer_name(self, Layer_name:str):
+
+    def recup_active_layer_name(self, Layer_name: str):
         # Recupération du nom de la couche active depuis main_plugin.py
         self.Layer_name = Layer_name
+
 
     def renvoie_base_cible(self):
         """Retourne la base de données cible.
@@ -126,6 +130,7 @@ class FormSettings(FORM_CLASS, QWidget):
         if not flag_connexion_reperee:
             self.cbx_database.setEnabled(True)
 
+
     def remplissage_liste(self):
         """Récupérer la couche cible choisie par l'utilisateur ("view_transdata" ou "secteur").
         On récupère la connexion affichée dans la liste déroulante.
@@ -155,19 +160,17 @@ class FormSettings(FORM_CLASS, QWidget):
             tabcibcol2 = 'nom'
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
-
-
-        #QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
+        # QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceUri()
         # setConnection configure l'adresse du serveur (hôte), le port, le nom de la base de données, 
-        # le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
-        # self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
-        #essai avec le service local_database, créé dans le fichier .pg_service.conf
+        #     le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
+        # URI classique : self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
+        # Ci-dessous, URI utilisant le service "local_database", créé dans le fichier ".pg_service.conf"
         self.uri.setConnection("local_database", "dev_bdcenpicardie", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
-        # la clé primaire de la couche à importer dans QGIS
+        #     la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
-        # Création de la couche ctrs_cible dans QGIS
+        # Création de la couche ctrs_cible dans QGIS en utilisant l'URI
         self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
         # Appel de la table des matières de QGIS dans la variable root
         root = QgsProject.instance().layerTreeRoot()
@@ -176,17 +179,51 @@ class FormSettings(FORM_CLASS, QWidget):
         self.ctrs_cible_canvas = self.ctrs_cibles.materialize(QgsFeatureRequest().setFilterRect(extent))
         # S'il y a quelque-chose dans ctrs_cible_canvas, alors on l'ajoute au projet et on l'affiche en haut de la table des matières.
         if self.ctrs_cible_canvas.featureCount()>0:
-           QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
-           root.insertLayer(0, self.ctrs_cible_canvas)
+            QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
+            root.insertLayer(0, self.ctrs_cible_canvas)
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
-            #attrs=feature.attributes()
+            # attrs=feature.attributes()
             self.lst_cibles.addItem("{} ({})".format(feature[tabcibcol1], feature[tabcibcol2]))
         tabcibname = tabcibpkey = tabcibcol1 = tabcibcol2 = ''
 
+
     def btn_executer_click(self):
-        print('Mesid = '+self.Mesid)
-        print('Macouche = '+self.Layer_name)
+        # print('Mesid = '+self.Mesid)
+        # print('Macouche = '+self.Layer_name)
+
+        try:
+            pg_connection = psycopg2.connect(service="local_database")
+
+            cursor = pg_connection.cursor()
+
+            # call stored procedure
+            cursor.callproc('procedure_creee_par_Gratien')
+
+            print("lance la procédure créée par Gratien")
+            result = cursor.fetchall()
+            for row in result:
+                return
+                #print("Id = ", row[0], )
+                #print("Name = ", row[1])
+                #print("Designation  = ", row[2])
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print("Erreur lors de la connexion à PostgreSQL", error)
+
+        finally:
+            # closing database connection.
+            if pg_connection:
+                cursor.close()
+                pg_connection.close()
+                print("connexion PostgreSQL fermée")
+
+
+
+
+
+
+
 
 
     # Le code commenté ci-dessous est pour mémoire : en fonction du choix de l'utilisateur, on utilise une requête SQL différente.  
