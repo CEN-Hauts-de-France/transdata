@@ -200,15 +200,20 @@ class FormSettings(FORM_CLASS, QWidget):
             cursor = pg_connection.cursor()
 
             # call stored procedure
-            cursor.callproc('procedure_creee_par_Gratien')
+            #cursor.callproc('procedure_creee_par_Gratien')
+            cursor.execute('select secteur_id from bdfauneflore.secteur where nom_com=\'Roussent\'')
+            # utilisation de cursor : cursor.callproc, cursoe.execute(requete)..."
 
-            print("lance la procédure créée par Gratien")
+            print("lance la requête")
             result = cursor.fetchall()
             for row in result:
+                print('secteur_id=',row[0])
                 return
                 #print("Id = ", row[0], )
                 #print("Name = ", row[1])
                 #print("Designation  = ", row[2])
+            #question pour psycopg : faut-il utiliser la méthode commit() avant de sortir du statement "try"?
+            # sinon les modifications en base seront perdues? Ou cela est fait automatiquement? A tester
 
         except (Exception, psycopg2.DatabaseError) as error:
             print("Erreur lors de la connexion à PostgreSQL", error)
