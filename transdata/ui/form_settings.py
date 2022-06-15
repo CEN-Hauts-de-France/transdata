@@ -155,9 +155,11 @@ class FormSettings(FORM_CLASS, QWidget):
             tabcibcol2 = 'lieu_dit'
         elif table_cible == 'Site CEN':
             tabcibname = 'view_transdata'
-            tabcibpkey = "objectid"
+            tabcibpkey = "row_number"
             tabcibcol1 = 'identifiant'
             tabcibcol2 = 'nom'
+
+        # Récupération de la connexion à la base de données qui est sélectionnée dans la combobox
         connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
 
         # QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
