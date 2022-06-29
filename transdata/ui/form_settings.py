@@ -61,7 +61,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # remplissage des widgets
         #    "cbx_database" (choix de la connexion à la base)
         self.renvoie_base_cible()
-        #    cbx_table_cible (liste de choix pour que l'utilisateur sélctionne l'entité cible)
+        #    cbx_table_cible (liste de choix pour que l'utilisateur sélectionne la table cible)
         self.cbx_table_cible.addItems(self.OPTION_TABLE_NAMES)
         #    lbl_nbObjSel_value (label indiquant le nombre de points sélectionnés)
         self.lbl_nbObjSel_value.setText(str(self.iface.activeLayer().selectedFeatureCount()))
@@ -194,6 +194,9 @@ class FormSettings(FORM_CLASS, QWidget):
         # print('Mesid = '+self.Mesid)
         # print('Macouche = '+self.Layer_name)
 
+        # Utilisation du module psycopg2 pour dialoguer avec le ase de données postgresql. 
+        # Voir la doucmentation : https://www.psycopg.org/docs/index.html
+
         try:
             pg_connection = psycopg2.connect(service="local_database")
 
@@ -212,7 +215,8 @@ class FormSettings(FORM_CLASS, QWidget):
                 #print("Id = ", row[0], )
                 #print("Name = ", row[1])
                 #print("Designation  = ", row[2])
-            #question pour psycopg : faut-il utiliser la méthode commit() avant de sortir du statement "try"?
+
+            # question pour psycopg : faut-il utiliser la méthode commit() avant de sortir du statement "try"?
             # sinon les modifications en base seront perdues? Ou cela est fait automatiquement? A tester
 
         except (Exception, psycopg2.DatabaseError) as error:
