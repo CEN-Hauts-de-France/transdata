@@ -147,15 +147,15 @@ class FormSettings(FORM_CLASS, QWidget):
 
         # Définition des variables "nom de la table et "clé primaire de la table" 
         # en fonction du choix de la table cible par l'utilisateur.
-        table_cible = self.cbx_table_cible.currentText()
-        if table_cible == 'Secteur':
+        self.table_cible = self.cbx_table_cible.currentText()
+        if self.table_cible == 'Secteur':
             tabcibname = 'secteur'
             tabcibpkey = "objectid"
             tabcibcol1 = 'secteur_id'
             tabcibcol2 = 'lieu_dit'
-        elif table_cible == 'Site CEN':
+        elif self.table_cible == 'Site CEN':
             tabcibname = 'view_transdata'
-            tabcibpkey = "row_number"
+            tabcibpkey = "objectid"
             tabcibcol1 = 'identifiant'
             tabcibcol2 = 'nom'
 
@@ -168,7 +168,7 @@ class FormSettings(FORM_CLASS, QWidget):
         #     le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         # URI classique : self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
         # Ci-dessous, URI utilisant le service "local_database", créé dans le fichier ".pg_service.conf"
-        self.uri.setConnection("local_database", "dev_bdcenpicardie", '', '', False,'')
+        self.uri.setConnection("cenpicardie_util", "bdcenpicardie", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
         #     la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
@@ -186,41 +186,42 @@ class FormSettings(FORM_CLASS, QWidget):
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
             # attrs=feature.attributes()
-            self.lst_cibles.addItem("{} ({})".format(feature[tabcibcol1], feature[tabcibcol2]))
+            self.lst_cibles.addItem("{} / ({})".format(feature[tabcibcol1], feature[tabcibcol2])), feature[tabcibcol1]
         tabcibname = tabcibpkey = tabcibcol1 = tabcibcol2 = ''
 
 
     def btn_executer_click(self):
-        # print('Mesid = '+self.Mesid)
-        # print('Macouche = '+self.Layer_name)
-
-        # Utilisation du module psycopg2 pour dialoguer avec le ase de données postgresql. 
-        # Voir la doucmentation : https://www.psycopg.org/docs/index.html
+        print('Mesid = '+self.Mesid)
+        print('Macouche = '+self.Layer_name)
+        self.idZone = self.lst_cibles.currentItem().text().split(' / ',2)[0]
+        print(str(self.idZone))
+        # Utilisation du module psycopg2 pour dialoguer avec la base de données postgresql. 
+        # Voir la documentation : https://www.psycopg.org/docs/index.html
 
         try:
-            pg_connection = psycopg2.connect(service="local_database")
+            pg_connection = psycopg2.connect(service="cenpicardie_admin")
 
             cursor = pg_connection.cursor()
 
             # call stored procedure
-            #cursor.callproc('procedure_creee_par_Gratien')
-            cursor.execute('select secteur_id from bdfauneflore.secteur where nom_com=\'Roussent\'')
+            cursor.callproc('bdfauneflore.plugin_trfdata_dev',(str(self.Layer_name),str(self.Mesid),str(self.table_cible),str(self.idZone)))
+            #cursor.execute('select secteur_id from bdfauneflore.secteur where nom_com=\'Roussent\'')
             # utilisation de cursor : cursor.callproc, cursoe.execute(requete)..."
 
             print("lance la requête")
-            result = cursor.fetchall()
-            for row in result:
-                print('secteur_id=',row[0])
-                return
+            #result = cursor.fetchall()
+            #for row in result:
+            #    print('secteur_id=',row[0])
+            #    return
                 #print("Id = ", row[0], )
                 #print("Name = ", row[1])
                 #print("Designation  = ", row[2])
 
             # question pour psycopg : faut-il utiliser la méthode commit() avant de sortir du statement "try"?
             # sinon les modifications en base seront perdues? Ou cela est fait automatiquement? A tester
-
+            pg_connection.commit()
         except (Exception, psycopg2.DatabaseError) as error:
-            print("Erreur lors de la connexion à PostgreSQL", error)
+            print("Erreur lors d'execution de la requete", error)
 
         finally:
             # closing database connection.
@@ -228,6 +229,7 @@ class FormSettings(FORM_CLASS, QWidget):
                 cursor.close()
                 pg_connection.close()
                 print("connexion PostgreSQL fermée")
+
 
 
 
