@@ -239,7 +239,7 @@ class FormSettings(FORM_CLASS, QWidget):
                 pg_connection.close()
                 print("connexion PostgreSQL fermée")
 
-                self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été trasférées vers '+str(self.idZone), log_level=0, push=True)
+                self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été trasférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
                 return
 
 
