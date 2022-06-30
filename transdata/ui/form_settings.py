@@ -193,8 +193,17 @@ class FormSettings(FORM_CLASS, QWidget):
     def btn_executer_click(self):
         print('Mesid = '+self.Mesid)
         print('Macouche = '+self.Layer_name)
-        self.idZone = self.lst_cibles.currentItem().text().split(' / ',2)[0]
-        print(str(self.idZone))
+
+        # idCible est l'objet de destination sélectionné
+        self.idCible = self.lst_cibles.currentItem()
+        # Si aucun objet sélectionné dans la liste alors message d'erreur, sinon lancement de la requete
+        if not self.idCible:
+            self.log(message= 'Veuillez sélectionner un secteur ou un site de destination', log_level=2, push=True)
+            return
+        else:
+            self.idZone = self.lst_cibles.currentItem().text().split(' / ',2)[0]
+            print(str(self.idZone))
+
         # Utilisation du module psycopg2 pour dialoguer avec la base de données postgresql. 
         # Voir la documentation : https://www.psycopg.org/docs/index.html
 
@@ -229,6 +238,9 @@ class FormSettings(FORM_CLASS, QWidget):
                 cursor.close()
                 pg_connection.close()
                 print("connexion PostgreSQL fermée")
+
+                self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été trasférées vers '+str(self.idZone), log_level=0, push=True)
+                return
 
 
 
