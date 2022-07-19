@@ -69,6 +69,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
         self.btn_exec.clicked.connect(self.btn_executer_click)
+        self.lst_cibles.selectionChanged(self.clignotEntite)
 
 
     def recup_selected_features(self, selected_features: list):
@@ -188,6 +189,21 @@ class FormSettings(FORM_CLASS, QWidget):
             # attrs=feature.attributes()
             self.lst_cibles.addItem("{} / ({})".format(feature[tabcibcol1], feature[tabcibcol2])), feature[tabcibcol1]
         tabcibname = tabcibpkey = tabcibcol1 = tabcibcol2 = ''
+
+
+    def clignotEntite(self):
+            
+
+        # La méthode flashfFeatureIds permet de faire clignoter une ou plusieurs entités en fonction des paramètres startColor
+        # endColor, flashes et duration.
+        # Pb : le 2nd paramètre demande une liste des Ids des entités à faire clignoter. -> on n peut pas se contenter d'un selectedFeatures()
+        canvas.flashFeatureIds(layer,[1],startColor = QColor(255,255,255,255), endColor = QColor(255,0,0,255), flashes = 5, duration = 500)
+
+        """def get_selection_id(layer):
+            for feature in layer.selectedFeatures():
+            print(feature.id())
+
+        iface.mapCanvas().selectionChanged.connect(get_selection_id)"""
 
 
     def btn_executer_click(self):
