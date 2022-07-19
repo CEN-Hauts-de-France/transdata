@@ -12,8 +12,8 @@ import psycopg2
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, QgsVectorLayer, QgsProject
-from qgis.PyQt import uic
+from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsExpression
+from qgis.PyQt import uic, QtGui
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
 
@@ -69,7 +69,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # connexion des signaux
         self.btn_recherch.clicked.connect(self.remplissage_liste)
         self.btn_exec.clicked.connect(self.btn_executer_click)
-        self.lst_cibles.selectionChanged(self.clignotEntite)
+        self.lst_cibles.itemSelectionChanged.connect(self.clignotEntite)
 
 
     def recup_selected_features(self, selected_features: list):
@@ -192,12 +192,48 @@ class FormSettings(FORM_CLASS, QWidget):
 
 
     def clignotEntite(self):
-            
+       
+        self.table_cible = self.cbx_table_cible.currentText()
+        if self.table_cible == 'Secteur':
+            tabcibname = 'secteur'
+            tabcibpkey = "objectid"
+            tabcibcol1 = 'secteur_id'
+            tabcibcol2 = 'lieu_dit'
+        elif self.table_cible == 'Site CEN':
+            tabcibname = 'view_transdata'
+            tabcibpkey = "objectid"
+            tabcibcol1 = 'identifiant'
+            tabcibcol2 = 'nom'
+          
+        # On récupère le texte de l'item sélectionné dans lst_cibles
+        selec = []
+        for item in range(len(self.lst_cibles.selectedItems())):
+            selec = self.lst_cibles.selectedItems()[item].text().split(' / ')
+            print(selec[0])
+        
+        # On sélectionne l'entité dans la bonne couche pour laquelle le code = le texte selec[0]
+        """self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)
+        self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
+        root = QgsProject.instance().layerTreeRoot()
+        self.ctrs_cible_canvas = self.ctrs_cibles.materialize(QgsFeatureRequest().setFilterRect(extent))
+        if self.ctrs_cible_canvas.featureCount()>0:
+            QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
+            root.insertLayer(0, self.ctrs_cible_canvas)"""
+        expr = " \"{}\" = '{}' ".format(tabcibcol1,selec[0])
+        print(expr)
+        self.ctrs_cibles.selectByExpression(" \"{}\" = '{}' ".format(tabcibcol1,selec[0]))
+        selection1 =  self.ctrs_cibles.selectedFeatures()
+        print(len(selection1))
+        list_id = []
+        for feature in self.ctrs_cibles.selectedFeatures():
+            list_id = feature.id()
 
         # La méthode flashfFeatureIds permet de faire clignoter une ou plusieurs entités en fonction des paramètres startColor
         # endColor, flashes et duration.
         # Pb : le 2nd paramètre demande une liste des Ids des entités à faire clignoter. -> on n peut pas se contenter d'un selectedFeatures()
-        canvas.flashFeatureIds(layer,[1],startColor = QColor(255,255,255,255), endColor = QColor(255,0,0,255), flashes = 5, duration = 500)
+        
+        canvas = self.iface.mapCanvas()
+        canvas.flashFeatureIds(self.ctrs_cibles,list_id,startColor = QtGui.QColor(255,255,255,255), endColor = QtGui.QColor(255,0,0,255), flashes = 5, duration = 500)
 
         """def get_selection_id(layer):
             for feature in layer.selectedFeatures():
