@@ -175,15 +175,15 @@ class FormSettings(FORM_CLASS, QWidget):
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
         # Création de la couche ctrs_cible dans QGIS en utilisant l'URI
         self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
-        # Appel de la table des matières de QGIS dans la variable root
-        root = QgsProject.instance().layerTreeRoot()
+        # Appel de la table des matières de QGIS dans l'objet self.root
+        self.root = QgsProject.instance().layerTreeRoot()
         # Création d'une couche temporaire à partir de ctrs_cibles, en filtrant sur l'étendue du canevas ("extent")
         # C'est ce que fait "materialize" : cela matérialise la requête dans une couche de type "memory".
         self.ctrs_cible_canvas = self.ctrs_cibles.materialize(QgsFeatureRequest().setFilterRect(extent))
         # S'il y a quelque-chose dans ctrs_cible_canvas, alors on l'ajoute au projet et on l'affiche en haut de la table des matières.
         if self.ctrs_cible_canvas.featureCount()>0:
             QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
-            root.insertLayer(0, self.ctrs_cible_canvas)
+            self.root.insertLayer(0, self.ctrs_cible_canvas)
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
             # attrs=feature.attributes()
@@ -285,7 +285,13 @@ class FormSettings(FORM_CLASS, QWidget):
                 print("connexion PostgreSQL fermée")
 
                 self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été transférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
+                
+                print('zorglub')
+                #QgsProject.instance().removeMapLayer(secteur)
+                self.root.removeLayer(self.ctrs_cibles)
+                self.close()
                 return
+                        
 
 
 
@@ -299,7 +305,7 @@ class FormSettings(FORM_CLASS, QWidget):
     # Le code commenté ci-dessous est pour mémoire : en fonction du choix de l'utilisateur, on utilise une requête SQL différente.  
     # Celles-ci sont stockées dans des fichiers SQL.
     # Le fichier est lu, et 2 colonnes du résultat de la requête sont utilisés pour remplir la liste de choix.
-    # Je n'utilise plus ce code car je suis obligé d'importer les couches dans QGIS pour pouvoir les filtrer géogréphiquement.
+    # Je n'utilise plus ce code car je suis obligé d'importer les couches dans QGIS pour pouvoir les filtrer géographiquement.
     # -> plus besoin des requêtes, stockées ou non dans un fichier.
 
     # if table_cible == "Secteur":
