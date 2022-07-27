@@ -51,13 +51,14 @@ class CenTransdataPlugin:
             return
 
         # check s'il y a des objets sélectionnés
+        count_features = active_layer.selectedFeatureCount()
         selected_features = active_layer.selectedFeatures()
-        if not len(selected_features):
+        if count_features == 0:
             self.log(message="Aucun objet sélectionné", log_level=2, push=True)
             return
 
         # moissonnage des id
-        Mesid = ','.join([str(f['objectid']) for f in selected_features])
+        Mesid = ','.join([str(f['id_perm']) for f in selected_features])
         print(Mesid)
 
         # lancement de la fenêtre de configuration

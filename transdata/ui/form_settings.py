@@ -169,7 +169,7 @@ class FormSettings(FORM_CLASS, QWidget):
         #     le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         # URI classique : self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
         # Ci-dessous, URI utilisant le service "local_database", créé dans le fichier ".pg_service.conf"
-        self.uri.setConnection("cenpicardie_util", "bdcenpicardie", '', '', False,'')
+        self.uri.setConnection("cenpicardie_dev", "bdcen_dev", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
         #     la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
@@ -212,13 +212,6 @@ class FormSettings(FORM_CLASS, QWidget):
             print(selec[0])
         
         # On sélectionne l'entité dans la bonne couche pour laquelle le code = le texte selec[0]
-        """self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)
-        self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
-        root = QgsProject.instance().layerTreeRoot()
-        self.ctrs_cible_canvas = self.ctrs_cibles.materialize(QgsFeatureRequest().setFilterRect(extent))
-        if self.ctrs_cible_canvas.featureCount()>0:
-            QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
-            root.insertLayer(0, self.ctrs_cible_canvas)"""
         expr = " \"{}\" = '{}' ".format(tabcibcol1,selec[0])
         print(expr)
         self.ctrs_cibles.selectByExpression(" \"{}\" = '{}' ".format(tabcibcol1,selec[0]))
@@ -226,7 +219,7 @@ class FormSettings(FORM_CLASS, QWidget):
         print(len(selection1))
         list_id = []
         for feature in self.ctrs_cibles.selectedFeatures():
-            list_id = feature.id()
+            list_id.append(feature.id())
 
         # La méthode flashfFeatureIds permet de faire clignoter une ou plusieurs entités en fonction des paramètres startColor
         # endColor, flashes et duration.
@@ -260,7 +253,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # Voir la documentation : https://www.psycopg.org/docs/index.html
 
         try:
-            pg_connection = psycopg2.connect(service="cenpicardie_admin")
+            pg_connection = psycopg2.connect(service="cenpicardie_dev")
 
             cursor = pg_connection.cursor()
 
@@ -291,7 +284,7 @@ class FormSettings(FORM_CLASS, QWidget):
                 pg_connection.close()
                 print("connexion PostgreSQL fermée")
 
-                self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été trasférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
+                self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été transférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
                 return
 
 
