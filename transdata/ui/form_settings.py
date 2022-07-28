@@ -287,40 +287,12 @@ class FormSettings(FORM_CLASS, QWidget):
                 self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été transférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
                 
                 print('zorglub')
-                #QgsProject.instance().removeMapLayer(secteur)
-                self.root.removeLayer(self.ctrs_cibles)
+                QgsProject.instance().removeMapLayer(self.ctrs_cible_canvas)
                 self.close()
                 return
                         
 
 
 
-
-
-
-
-
-
-
-    # Le code commenté ci-dessous est pour mémoire : en fonction du choix de l'utilisateur, on utilise une requête SQL différente.  
-    # Celles-ci sont stockées dans des fichiers SQL.
-    # Le fichier est lu, et 2 colonnes du résultat de la requête sont utilisés pour remplir la liste de choix.
-    # Je n'utilise plus ce code car je suis obligé d'importer les couches dans QGIS pour pouvoir les filtrer géographiquement.
-    # -> plus besoin des requêtes, stockées ou non dans un fichier.
-
-    # if table_cible == "Secteur":
-    #     #sql_path = "sql/recup_secteur.sql"
-    # elif table_cible == "Site CEN":
-    #     #sql_path = "sql/recup_site.sql"
-    # else:
-    #     self.log(message="Table inconnue", log_level=1, push=True)
-
-    # with open(Path(self.plg_folder) / sql_path, "r") as f:
-    #     sql = f.read()
-    #     print(sql)
-
-    # result = connexion.executeSql(sql)
-    # for ligne in result:
-    #     self.lst_cibles.addItem("{} ({})".format(ligne[0], ligne[1]))
 
 
