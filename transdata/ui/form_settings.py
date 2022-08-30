@@ -320,10 +320,17 @@ class FormSettings(FORM_CLASS, QWidget):
                 self.log(message= 'Les '+str(len(self.selected_features))+' données sélectionnées ont bien été transférées vers le '+str(self.table_cible)+' : '+str(self.idZone), log_level=3, push=True)
                 
                 print('zorglub')
-                QgsProject.instance().removeMapLayer(self.ctrs_cible_canvas)
                 self.close()
                 return
-                        
+
+    def closeEvent(self, event):
+        # fermer la table "ctrs_cible_canvas", puis accepter la fermeture de la fenêtre du plugin
+        for maplayer in QgsProject.instance().mapLayersByName('contours_cibles'):
+            QgsProject.instance().removeMapLayer(maplayer)
+            print('Fermer la table "Contours_cible"')
+        event.accept() # accepter la fermeture de la fenêtre
+
+        
 
 
 
