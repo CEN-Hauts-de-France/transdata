@@ -12,7 +12,8 @@ import psycopg2
 
 # PyQGIS
 from qgis.gui import QgisInterface
-from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, QgsVectorLayer, QgsProject, QgsExpression
+from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, \
+    QgsVectorLayer, QgsProject, QgsSymbol, QgsSingleSymbolRenderer, QgsSimpleFillSymbolLayer, QgsRenderContext
 from qgis.PyQt import uic, QtGui
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.utils import pluginDirectory
@@ -184,6 +185,20 @@ class FormSettings(FORM_CLASS, QWidget):
         if self.ctrs_cible_canvas.featureCount()>0:
             QgsProject.instance().addMapLayer(self.ctrs_cible_canvas, False)
             self.root.insertLayer(0, self.ctrs_cible_canvas)
+            # Symbologie de la couche
+                # create a new single symbol renderer
+            symbol = QgsSymbol.defaultSymbol(self.ctrs_cible_canvas.geometryType())
+            symbol.setOpacity(0.5)
+            renderer = QgsSingleSymbolRenderer(symbol)
+                # create a new simple marker symbol layer
+            properties = {'color': 'green', 'color_border': 'black'}
+            symbol_layer = QgsSimpleFillSymbolLayer.create(properties)
+            symbol_layer.setBrushStyle(1) #1 = Qt.SolidPattern. Cf doc de QBrush
+                # assign the symbol layer to the symbol renderer
+            renderer.symbols(QgsRenderContext())[0].changeSymbolLayer(0, symbol_layer)
+                # assign the renderer to the layer
+            self.ctrs_cible_canvas.setRenderer(renderer)
+
         # Récupération des attributs de la couche filtrée géographiquement <-(request) et insertion dans la liste de choix
         for feature in self.ctrs_cibles.getFeatures(request):
             # attrs=feature.attributes()
