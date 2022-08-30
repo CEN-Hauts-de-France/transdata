@@ -15,7 +15,7 @@ from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, \
     QgsVectorLayer, QgsProject, QgsSymbol, QgsSingleSymbolRenderer, QgsSimpleFillSymbolLayer, QgsRenderContext
 from qgis.PyQt import uic, QtGui
-from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QDialogButtonBox
+from qgis.PyQt.QtWidgets import QWidget, QMessageBox
 from qgis.utils import pluginDirectory
 
 # Plugin package
@@ -327,6 +327,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # fermer la table "ctrs_cible_canvas", puis accepter la fermeture de la fenêtre du plugin
         for maplayer in QgsProject.instance().mapLayersByName('contours_cibles'):
             QgsProject.instance().removeMapLayer(maplayer)
+            self.iface.mapCanvas().refresh()
             print('Fermer la table "Contours_cible"')
         event.accept() # accepter la fermeture de la fenêtre
 
