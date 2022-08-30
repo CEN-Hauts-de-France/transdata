@@ -15,7 +15,7 @@ from qgis.gui import QgisInterface
 from qgis.core import QgsProviderRegistry, QgsFeatureRequest, QgsDataSourceUri, \
     QgsVectorLayer, QgsProject, QgsSymbol, QgsSingleSymbolRenderer, QgsSimpleFillSymbolLayer, QgsRenderContext
 from qgis.PyQt import uic, QtGui
-from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QDialogButtonBox
 from qgis.utils import pluginDirectory
 
 # Plugin package
@@ -251,11 +251,29 @@ class FormSettings(FORM_CLASS, QWidget):
 
 
     def btn_executer_click(self):
-        print('Mesid = '+self.Mesid)
-        print('Macouche = '+self.Layer_name)
+        #print('Mesid = '+self.Mesid)
+        #print('Macouche = '+self.Layer_name)
 
+        # Vérification : message d'alerte si plus de 1000 entités sélectionnées
+        print (self.iface.activeLayer().selectedFeatureCount())
+        if self.iface.activeLayer().selectedFeatureCount() > 1000:
+            #QMessageBox.warning(self, 'Alerte', u'Plus de 1000 entités sélectionnées. Etes-vous sûr(e) de vouloir les transférer?')
+            # construction du message d'erreur, qui sera utilisé si aucune couche ou aucune entité n'est sélectionnée
+            mess1000 = QMessageBox()
+            mess1000.setText(u'Plus de 1000 entités sélectionnées')
+            mess1000.setInformativeText(u'Etes-vous sur(e) de vouloir transférer autant de données?')
+            mess1000.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            mess1000.setDefaultButton(QMessageBox.No)
+            mess1000.setIcon(QMessageBox.Question)
+            ret = mess1000.exec_()
+            if ret == QMessageBox.Yes:
+                pass
+            elif ret == QMessageBox.No:
+                self.close()
+                return
         # idCible est l'objet de destination sélectionné
         self.idCible = self.lst_cibles.currentItem()
+        
         # Si aucun objet sélectionné dans la liste alors message d'erreur, sinon lancement de la requete
         if not self.idCible:
             self.log(message= 'Veuillez sélectionner un secteur ou un site de destination', log_level=2, push=True)
