@@ -38,7 +38,7 @@ class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
     # Initialisations
-    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "Serveur local pg12 - service")
+    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "XServeur local pg12 - service", "cenpicardie_dev")
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
@@ -47,7 +47,7 @@ class FormSettings(FORM_CLASS, QWidget):
         super().__init__(parent)
         # Utilisation du module log_handler pour envoyer ds messages aux utilisateurs
         self.log = PlgLogger().log
-        # Instanciation du chemin vers le dossier du plugion sur le PC
+        # Instanciation du chemin vers le dossier du plugin sur le PC
         self.plg_folder = pluginDirectory("transdata")
         # Initialisation de l'interface de la boite de dialogue
         self.setupUi(self)
@@ -128,6 +128,8 @@ class FormSettings(FORM_CLASS, QWidget):
             if connection_name in self.DB_CONN_NAMES:
                 flag_connexion_reperee = True
                 self.cbx_database.setCurrentText(connection_name)
+                self.cbx_database.setVisible(False)
+                self.lbl_database.setVisible(False)
         # Si aucune connexion n'est listée dans DB_CONN_NAMES, on laisse l'utilisateur en choisir une.
         if not flag_connexion_reperee:
             self.cbx_database.setEnabled(True)
@@ -162,7 +164,8 @@ class FormSettings(FORM_CLASS, QWidget):
             tabcibcol2 = 'nom'
 
         # Récupération de la connexion à la base de données qui est sélectionnée dans la combobox
-        connexion = self.cbx_database.itemData(self.cbx_database.currentIndex())
+        connexion = self.cbx_database.itemText(self.cbx_database.currentIndex())
+        print(connexion)
 
         # QgsDataSourceUri() permet d'aller chercher une table d'une base de données PostGis (cf. PyQGIS cookbook)
         self.uri = QgsDataSourceUri()
@@ -170,12 +173,12 @@ class FormSettings(FORM_CLASS, QWidget):
         #     le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         # URI classique : self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
         # Ci-dessous, URI utilisant le service "local_database", créé dans le fichier ".pg_service.conf"
-        self.uri.setConnection("cenpicardie_dev", "bdcen_dev", '', '', False,'')
+        self.uri.setConnection(connexion, "bdcen_dev", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
         #     la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
         # Création de la couche ctrs_cible dans QGIS en utilisant l'URI
-        self.ctrs_cibles=QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
+        self.ctrs_cibles = QgsVectorLayer(self.uri.uri(), "contours_cibles", "postgres")
         # Appel de la table des matières de QGIS dans l'objet self.root
         self.root = QgsProject.instance().layerTreeRoot()
         # Création d'une couche temporaire à partir de ctrs_cibles, en filtrant sur l'étendue du canevas ("extent")
@@ -193,7 +196,7 @@ class FormSettings(FORM_CLASS, QWidget):
                 # create a new simple marker symbol layer
             properties = {'color': 'green', 'color_border': 'black'}
             symbol_layer = QgsSimpleFillSymbolLayer.create(properties)
-            symbol_layer.setBrushStyle(1) #1 = Qt.SolidPattern. Cf doc de QBrush
+            symbol_layer.setBrushStyle(1)  # 1 = Qt.SolidPattern. Cf doc de QBrush
                 # assign the symbol layer to the symbol renderer
             renderer.symbols(QgsRenderContext())[0].changeSymbolLayer(0, symbol_layer)
                 # assign the renderer to the layer
@@ -210,16 +213,10 @@ class FormSettings(FORM_CLASS, QWidget):
        
         self.table_cible = self.cbx_table_cible.currentText()
         if self.table_cible == 'Secteur':
-            tabcibname = 'secteur'
-            tabcibpkey = "objectid"
             tabcibcol1 = 'secteur_id'
-            tabcibcol2 = 'lieu_dit'
         elif self.table_cible == 'Site CEN':
-            tabcibname = 'view_transdata'
-            tabcibpkey = "objectid"
             tabcibcol1 = 'identifiant'
-            tabcibcol2 = 'nom'
-          
+                  
         # On récupère le texte de l'item sélectionné dans lst_cibles
         selec = []
         for item in range(len(self.lst_cibles.selectedItems())):
