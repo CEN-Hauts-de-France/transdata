@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icon_transdata">
+    <file>icon_transdata.png</file>
+  </qresource>
+</RCC>

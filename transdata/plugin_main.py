@@ -3,6 +3,8 @@
 # PyQGIS
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtGui import QIcon
+import os, os.path
 
 # Plugin package
 from transdata.ui.form_settings import FormSettings
@@ -21,10 +23,13 @@ class CenTransdataPlugin:
         """
         self.iface = iface
         self.log = PlgLogger().log
-
+        # initialize plugin directory
+        self.plugin_dir = os.path.dirname(__file__)
 
     def initGui(self):
-        self.action = QAction("Go!", self.iface.mainWindow())
+        self.action = QAction(
+            QIcon(self.plugin_dir+"/icon_transdata.png"),
+            "Go!", self.iface.mainWindow())
         self.action.triggered.connect(self.run)
         self.iface.addToolBarIcon(self.action)
 
