@@ -7,3 +7,4 @@ qgisMinimumVersion=3.0
 author=Vincent Damoy
 email=v.damoy@cen-hautsdefrance.org
 repository=URL to the code repository
+icon=icon_transdata.png
