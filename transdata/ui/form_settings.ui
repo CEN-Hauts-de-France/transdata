@@ -48,7 +48,21 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayout_2">
-     <item row="1" column="0">
+     <item row="0" column="0">
+      <widget class="QLabel" name="lbl_database">
+       <property name="text">
+        <string>Base de données utilisée :</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="cbx_database">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
       <widget class="QLabel" name="lbl_table_cible">
        <property name="locale">
         <locale language="French" country="France"/>
@@ -58,7 +72,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="3" column="1">
       <widget class="QComboBox" name="cbx_table_cible">
        <property name="locale">
         <locale language="French" country="France"/>
@@ -68,27 +82,33 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="0" colspan="2">
+     <item row="11" column="0" colspan="2">
       <widget class="QPushButton" name="btn_recherch">
        <property name="locale">
         <locale language="French" country="France"/>
        </property>
        <property name="text">
-        <string>Rechercher</string>
+        <string>Lister les sites/secteurs apparaissant à l'écran</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="lbl_database">
+     <item row="1" column="0">
+      <widget class="QLabel" name="lbl_nbObjSel">
+       <property name="locale">
+        <locale language="French" country="France"/>
+       </property>
        <property name="text">
-        <string>Base de données utilisée :</string>
+        <string>Nbe observations séléctionnées :</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="cbx_database">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="1" column="1">
+      <widget class="QLabel" name="lbl_nbObjSel_value">
+       <property name="locale">
+        <locale language="French" country="France"/>
+       </property>
+       <property name="text">
+        <string>0</string>
        </property>
       </widget>
      </item>
@@ -109,26 +129,6 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayout_3">
-     <item row="0" column="0">
-      <widget class="QLabel" name="lbl_nbObjSel">
-       <property name="locale">
-        <locale language="French" country="France"/>
-       </property>
-       <property name="text">
-        <string>Nombre objet séléctionnés :</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="lbl_nbObjSel_value">
-       <property name="locale">
-        <locale language="French" country="France"/>
-       </property>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="0" colspan="2">
       <widget class="QListWidget" name="lst_cibles"/>
      </item>
