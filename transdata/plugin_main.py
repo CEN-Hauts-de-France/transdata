@@ -29,7 +29,7 @@ class CenTransdataPlugin:
     def initGui(self):
         self.action = QAction(
             QIcon(self.plugin_dir+"/icon_transdata.png"),
-            "Go!", self.iface.mainWindow())
+            "Transfert de données faune / flore", self.iface.mainWindow())
         self.action.triggered.connect(self.run)
         self.iface.addToolBarIcon(self.action)
 
