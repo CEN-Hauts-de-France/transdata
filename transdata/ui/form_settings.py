@@ -38,7 +38,7 @@ class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
     # Initialisations
-    DB_CONN_NAMES = ("bdcen", "bdcen_admin", "XServeur local pg12 - service", "cenpicardie_dev")
+    DB_CONN_NAMES = ("bd CEN (util)","bd CEN (admin)")
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
@@ -173,7 +173,7 @@ class FormSettings(FORM_CLASS, QWidget):
         #     le SSL ou non, l'utilisateur et le mot de passe (ou, comme c'est le cas ici, le authConfigId).
         # URI classique : self.uri.setConnection("127.0.0.1", "5435", "dev_bdcenpicardie", '', '', False,'5ba2lc0')   #5ba2lc0 #dme471m
         # Ci-dessous, URI utilisant le service "local_database", créé dans le fichier ".pg_service.conf"
-        self.uri.setConnection(connexion, "bdcen_dev", '', '', False,'')
+        self.uri.setConnection(connexion, "bdcenpicardie", '', '', False,'')
         # setDataSource configure le schéma, la table postgis, la colonne géométrique, une requête au format texte et 
         #     la clé primaire de la couche à importer dans QGIS
         self.uri.setDataSource("bdfauneflore", tabcibname, "geom", None , tabcibpkey)    
@@ -283,7 +283,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # Voir la documentation : https://www.psycopg.org/docs/index.html
 
         try:
-            pg_connection = psycopg2.connect(service="cenpicardie_dev")
+            pg_connection = psycopg2.connect(service="cenhdf_util")
 
             cursor = pg_connection.cursor()
 
