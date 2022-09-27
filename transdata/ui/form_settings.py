@@ -38,7 +38,7 @@ class FormSettings(FORM_CLASS, QWidget):
     """Settings form."""
 
     # Initialisations
-    DB_CONN_NAMES = ("bd CEN (util)","bd CEN (admin)")
+    DB_CONN_NAMES = ("bd CEN","bd CEN (admin)") # le nom donné dans QGis doit être identique à celui du service associé
     DB_TYPES = ("postgres",)
     OPTION_TABLE_NAMES = ("Secteur", "Site CEN")
 
