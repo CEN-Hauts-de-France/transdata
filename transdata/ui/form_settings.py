@@ -283,7 +283,7 @@ class FormSettings(FORM_CLASS, QWidget):
         # Voir la documentation : https://www.psycopg.org/docs/index.html
 
         try:
-            pg_connection = psycopg2.connect(service="cenhdf_util")
+            pg_connection = psycopg2.connect(service="bd CEN (admin)")
 
             cursor = pg_connection.cursor()
 
